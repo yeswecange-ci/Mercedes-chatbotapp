@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('daily_statistics', function (Blueprint $table) {
-            // Renommer les colonnes existantes vers les menus Sportcash
+            // Renommer les colonnes existantes vers les menus Mercedes
             $table->renameColumn('menu_vehicules_neufs', 'menu_informations');
             $table->renameColumn('menu_sav',             'menu_demandes');
             $table->renameColumn('menu_club_vip',        'menu_encaissement');

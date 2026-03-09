@@ -61,7 +61,7 @@ Ajoutez ces variables à votre fichier `.env` :
 
 ```env
 # App
-APP_NAME="YesWeChange Support"
+APP_NAME="Mercedes Support"
 
 # Chatwoot
 CHATWOOT_BASE_URL=https://votre-chatwoot.com

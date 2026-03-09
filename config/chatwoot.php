@@ -9,7 +9,7 @@ return [
     */
 
     // URL de votre instance Chatwoot self-hosted (sans slash final)
-    'base_url' => env('CHATWOOT_BASE_URL', 'https://support.yeswechange.com'),
+    'base_url' => env('CHATWOOT_BASE_URL', 'https://support.mercedes.com'),
 
     // ID du compte Chatwoot
     'account_id' => env('CHATWOOT_ACCOUNT_ID', 1),
