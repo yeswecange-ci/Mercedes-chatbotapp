@@ -14,10 +14,11 @@
   });
 
   Route::prefix('bot-tracking/twilio')->group(function () {
-      Route::post('/incoming',    [TwilioWebhookController::class, 'handleIncomingMessage']);
-      Route::post('/menu-choice', [TwilioWebhookController::class, 'handleMenuChoice']);
-      Route::post('/free-input',  [TwilioWebhookController::class, 'handleFreeInput']);
-      Route::post('/complete',    [TwilioWebhookController::class, 'completeConversation']);
+      Route::post('/incoming',      [TwilioWebhookController::class, 'handleIncomingMessage']);
+      Route::post('/client-check',  [TwilioWebhookController::class, 'handleClientCheck']);
+      Route::post('/menu-choice',   [TwilioWebhookController::class, 'handleMenuChoice']);
+      Route::post('/free-input',    [TwilioWebhookController::class, 'handleFreeInput']);
+      Route::post('/complete',      [TwilioWebhookController::class, 'completeConversation']);
   });
 
   // ── Interface web (avec auth) ────────────────────────────────────────────────

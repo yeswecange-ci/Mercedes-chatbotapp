@@ -92,8 +92,8 @@
       "name": "delay_welcome",
       "type": "run-function",
       "transitions": [
-        { "next": "check_client_exists", "event": "success" },
-        { "next": "check_client_exists", "event": "fail" }
+        { "next": "get_client_status", "event": "success" },
+        { "next": "get_client_status", "event": "fail" }
       ],
       "properties": {
         "service_sid": "ZSb7de9fd35671e380ad53677e2cf57770",
@@ -101,6 +101,24 @@
         "offset": { "x": 4267, "y": 852 },
         "function_sid": "ZHe612874f4ed88f0f570e65c3a78d3411",
         "url": "https://merco-9614.twil.io/add_delay"
+      }
+    },
+    {
+      "name": "get_client_status",
+      "type": "make-http-request",
+      "transitions": [
+        { "next": "check_client_exists", "event": "success" },
+        { "next": "check_client_exists", "event": "failed" }
+      ],
+      "properties": {
+        "offset": { "x": 4224, "y": 1028 },
+        "method": "POST",
+        "content_type": "application/x-www-form-urlencoded;charset=utf-8",
+        "add_twilio_auth": false,
+        "parameters": [
+          { "value": "{{trigger.message.From}}", "key": "From" }
+        ],
+        "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/client-check"
       }
     },
     {
@@ -114,7 +132,7 @@
           "conditions": [
             {
               "friendly_name": "Client Has Name",
-              "arguments": ["{{trigger.params.client_has_name}}"],
+              "arguments": ["{{widgets.get_client_status.parsed.client_has_name}}"],
               "type": "equal_to",
               "value": "true"
             }
@@ -122,8 +140,8 @@
         }
       ],
       "properties": {
-        "input": "{{trigger.params.client_has_name}}",
-        "offset": { "x": 4224, "y": 1028 }
+        "input": "{{widgets.get_client_status.parsed.client_has_name}}",
+        "offset": { "x": 4224, "y": 1204 }
       }
     },
     {
@@ -136,7 +154,7 @@
           "conditions": [
             {
               "friendly_name": "Status Already Known",
-              "arguments": ["{{trigger.params.client_status_known}}"],
+              "arguments": ["{{widgets.get_client_status.parsed.client_status_known}}"],
               "type": "equal_to",
               "value": "true"
             }
@@ -145,8 +163,8 @@
         { "next": "ask_is_client_returning", "event": "noMatch" }
       ],
       "properties": {
-        "input": "{{trigger.params.client_status_known}}",
-        "offset": { "x": 4224, "y": 1200 }
+        "input": "{{widgets.get_client_status.parsed.client_status_known}}",
+        "offset": { "x": 4224, "y": 1380 }
       }
     },
     {

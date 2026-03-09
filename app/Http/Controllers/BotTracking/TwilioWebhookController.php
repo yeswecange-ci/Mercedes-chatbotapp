@@ -352,6 +352,31 @@ class TwilioWebhookController extends Controller
     }
 
     /**
+     * Lightweight client status check — no side effects, used by subflow directly
+     */
+    public function handleClientCheck(Request $request)
+    {
+        $from = $request->input('From', '');
+        $phoneNumber = str_replace('whatsapp:', '', $from);
+
+        if (!$phoneNumber) {
+            return response()->json([
+                'client_has_name'     => 'false',
+                'client_status_known' => 'false',
+                'client_full_name'    => '',
+            ]);
+        }
+
+        $client = \App\Models\Client::where('phone_number', $phoneNumber)->first();
+
+        return response()->json([
+            'client_has_name'     => ($client && $client->client_full_name !== null) ? 'true' : 'false',
+            'client_status_known' => ($client && $client->is_client !== null)         ? 'true' : 'false',
+            'client_full_name'    => $client->client_full_name ?? '',
+        ]);
+    }
+
+    /**
      * Update conversation data based on widget input
      */
     private function updateConversationData($conversation, $widgetName, $userInput)
