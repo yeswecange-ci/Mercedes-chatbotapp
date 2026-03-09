@@ -82,31 +82,36 @@
         {{-- Charts Row --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             <div class="bg-white rounded-xl border border-gray-200 p-5">
-                <h3 class="text-sm font-semibold text-gray-700 mb-4">Repartition des menus</h3>
-                <div class="flex justify-center"><canvas id="menuChart" width="220" height="220"></canvas></div>
-                <div class="mt-4 space-y-1.5">
-                    @php
-                        $menuLegend = [
-                            'informations' => ['label' => 'Informations',  'color' => '#6366f1'],
-                            'demandes'     => ['label' => 'Demandes',      'color' => '#0ea5e9'],
-                            'paris'        => ['label' => 'Paris',         'color' => '#10b981'],
-                            'encaissement' => ['label' => 'Encaissement',  'color' => '#f59e0b'],
-                            'reclamations' => ['label' => 'Reclamations',  'color' => '#ef4444'],
-                            'plaintes'     => ['label' => 'Plaintes',      'color' => '#8b5cf6'],
-                            'conseiller'   => ['label' => 'Conseiller',    'color' => '#ec4899'],
-                            'faq'          => ['label' => 'FAQ',           'color' => '#64748b'],
-                        ];
-                    @endphp
-                    @foreach($menuLegend as $key => $meta)
-                        <div class="flex items-center justify-between text-xs">
-                            <div class="flex items-center gap-2">
-                                <span class="inline-block w-3 h-3 rounded-full" style="background:{{ $meta['color'] }}"></span>
-                                <span class="text-gray-600">{{ $meta['label'] }}</span>
+                <h3 class="text-sm font-semibold text-gray-700 mb-4">Répartition des menus</h3>
+                @php
+                    $palette = ['#e2001a','#0ea5e9','#10b981','#f59e0b','#8b5cf6','#ec4899','#64748b','#f97316','#06b6d4','#84cc16'];
+                    $colorIdx = 0;
+                    // Flatten: un label par choix de menu (tous menus confondus)
+                    $allChoices = collect();
+                    foreach ($menuStats as $menuName => $choices) {
+                        foreach ($choices as $c) {
+                            $allChoices->push(['label' => $menuName . ' / ' . $c['label'], 'count' => $c['count']]);
+                        }
+                    }
+                    $allChoices = $allChoices->sortByDesc('count')->values();
+                @endphp
+                @if($allChoices->isEmpty())
+                    <p class="text-xs text-gray-400 text-center py-8">Aucune donnée de menu disponible.</p>
+                @else
+                    <div class="flex justify-center"><canvas id="menuChart" width="220" height="220"></canvas></div>
+                    <div class="mt-4 space-y-1.5 max-h-40 overflow-y-auto">
+                        @foreach($allChoices as $i => $item)
+                            <div class="flex items-center justify-between text-xs">
+                                <div class="flex items-center gap-2">
+                                    <span class="inline-block w-3 h-3 rounded-full flex-shrink-0"
+                                          style="background:{{ $palette[$i % count($palette)] }}"></span>
+                                    <span class="text-gray-600 truncate max-w-[140px]">{{ $item['label'] }}</span>
+                                </div>
+                                <span class="font-medium text-gray-800">{{ $item['count'] }}</span>
                             </div>
-                            <span class="font-medium text-gray-800">{{ $menuStats[$key] ?? 0 }}</span>
-                        </div>
-                    @endforeach
-                </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
             <div class="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-5">
                 <h3 class="text-sm font-semibold text-gray-700 mb-4">Tendance quotidienne</h3>
@@ -191,22 +196,15 @@
 (function () {
     var menuCtx = document.getElementById('menuChart');
     if (menuCtx) {
+        var menuData = @json($allChoices->values());
+        var palette  = ['#e2001a','#0ea5e9','#10b981','#f59e0b','#8b5cf6','#ec4899','#64748b','#f97316','#06b6d4','#84cc16'];
         new Chart(menuCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Informations','Demandes','Paris','Encaissement','Reclamations','Plaintes','Conseiller','FAQ'],
+                labels:   menuData.map(function(d){ return d.label; }),
                 datasets: [{
-                    data: [
-                        {{ $menuStats['informations'] ?? 0 }},
-                        {{ $menuStats['demandes'] ?? 0 }},
-                        {{ $menuStats['paris'] ?? 0 }},
-                        {{ $menuStats['encaissement'] ?? 0 }},
-                        {{ $menuStats['reclamations'] ?? 0 }},
-                        {{ $menuStats['plaintes'] ?? 0 }},
-                        {{ $menuStats['conseiller'] ?? 0 }},
-                        {{ $menuStats['faq'] ?? 0 }}
-                    ],
-                    backgroundColor: ['#6366f1','#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#64748b'],
+                    data:            menuData.map(function(d){ return d.count; }),
+                    backgroundColor: menuData.map(function(_,i){ return palette[i % palette.length]; }),
                     borderWidth: 0, hoverOffset: 6
                 }]
             },

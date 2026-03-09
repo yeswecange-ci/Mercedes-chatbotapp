@@ -28,6 +28,7 @@ class DailyStatistic extends Model
         'menu_conseiller',
         'menu_faq',
         'submenu_stats',
+        'menu_stats',
         'avg_session_duration_seconds',
         'avg_response_time_ms',
         'clients_count',
@@ -37,8 +38,9 @@ class DailyStatistic extends Model
     ];
 
     protected $casts = [
-        'date' => 'date',
+        'date'          => 'date',
         'submenu_stats' => 'array',
+        'menu_stats'    => 'array',
     ];
 
     /**
@@ -63,26 +65,27 @@ class DailyStatistic extends Model
     }
 
     /**
-     * Incrémenter le compteur du menu principal
+     * Incrémenter les stats de menu dynamiquement.
+     * Fonctionne pour n'importe quel menu/flow Twilio.
+     *
+     * @param string $menuName   Nom du widget/menu (ex: "menu_principal", "sous_menu_info")
+     * @param string $choiceLabel Label du choix (ex: "Informations", "1")
+     */
+    public function incrementMenuStats(string $menuName, string $choiceLabel): self
+    {
+        $stats = $this->menu_stats ?? [];
+        $stats[$menuName][$choiceLabel] = ($stats[$menuName][$choiceLabel] ?? 0) + 1;
+        $this->menu_stats = $stats;
+        $this->save();
+        return $this;
+    }
+
+    /**
+     * @deprecated Utiliser incrementMenuStats() à la place
      */
     public function incrementMainMenu(string $menuChoice): self
     {
-        $mapping = [
-            '1' => 'menu_informations',
-            '2' => 'menu_demandes',
-            '3' => 'menu_paris',
-            '4' => 'menu_encaissement',
-            '5' => 'menu_reclamations',
-            '6' => 'menu_plaintes',
-            '7' => 'menu_conseiller',
-            '8' => 'menu_faq',
-        ];
-
-        if (isset($mapping[$menuChoice])) {
-            $this->increment($mapping[$menuChoice]);
-        }
-
-        return $this;
+        return $this->incrementMenuStats('menu_principal', $menuChoice);
     }
 
     /**
@@ -137,6 +140,20 @@ class DailyStatistic extends Model
             ->whereNotNull('response_time_ms')
             ->avg('response_time_ms');
         $stat->avg_response_time_ms = $avgResponseTime ? (int) $avgResponseTime : null;
+
+        // Menu stats dynamique — indépendant du flow Twilio
+        $conversationIds = Conversation::whereDate('started_at', $date)->pluck('id');
+        $menuStats = [];
+        ConversationEvent::whereIn('conversation_id', $conversationIds)
+            ->where('event_type', 'menu_choice')
+            ->get()
+            ->each(function ($event) use (&$menuStats) {
+                $menuName = $event->menu_name
+                    ?: (isset($event->metadata['menu_choice']) ? $event->metadata['menu_choice'] : 'menu_principal');
+                $label = $event->choice_label ?: $event->user_input ?: 'unknown';
+                $menuStats[$menuName][$label] = ($menuStats[$menuName][$label] ?? 0) + 1;
+            });
+        $stat->menu_stats = $menuStats;
 
         $stat->save();
         return $stat;

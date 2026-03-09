@@ -213,8 +213,9 @@ class TwilioWebhookController extends Controller
             Log::info('Twilio Menu Choice', $request->all());
 
             $conversationId = $request->input('conversation_id');
-            $menuChoice = $request->input('menu_choice');
-            $userInput = $request->input('user_input');
+            $menuChoice     = $request->input('menu_choice');   // nom du widget/menu
+            $userInput      = $request->input('user_input');    // valeur saisie (ex: "1")
+            $choiceLabel    = $request->input('choice_label', $userInput); // label lisible (ex: "Informations")
 
             $conversation = Conversation::find($conversationId);
 
@@ -240,17 +241,20 @@ class TwilioWebhookController extends Controller
                 return $menuPath;
             });
 
-            // Store event
+            // Store event avec menu_name + choice_label pour stats dynamiques
             ConversationEvent::create([
                 'conversation_id' => $conversation->id,
-                'event_type' => 'menu_choice',
-                'user_input' => $userInput,
-                'metadata' => ['menu_choice' => $menuChoice],
+                'event_type'      => 'menu_choice',
+                'user_input'      => $userInput,
+                'menu_name'       => $menuChoice,
+                'choice_label'    => $choiceLabel,
+                'widget_name'     => $menuChoice,
+                'metadata'        => ['menu_choice' => $menuChoice, 'choice_label' => $choiceLabel],
             ]);
 
-            // Incrémenter les statistiques quotidiennes du menu principal
-            if ($menuChoice === 'menu_principal' && $userInput !== null) {
-                DailyStatistic::today()->incrementMainMenu((string) $userInput);
+            // Stats dynamiques — fonctionne peu importe le flow Twilio
+            if ($menuChoice && $userInput !== null) {
+                DailyStatistic::today()->incrementMenuStats($menuChoice, $choiceLabel ?: $userInput);
             }
 
             return response()->json([

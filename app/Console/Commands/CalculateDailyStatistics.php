@@ -125,57 +125,38 @@ class CalculateDailyStatistics extends Command
     }
 
     /**
-     * Calculate menu statistics for a given date
+     * Calcule les stats de menu dynamiquement depuis les événements.
+     * S'adapte à n'importe quel flow Twilio sans configuration.
      */
-    protected function calculateMenuStats(DailyStatistic $stat, Carbon $date)
+    protected function calculateMenuStats(DailyStatistic $stat, Carbon $date): void
     {
         try {
-            // Obtenir toutes les conversations de cette date
             $conversationIds = Conversation::whereDate('started_at', $date)->pluck('id');
 
             if ($conversationIds->isEmpty()) {
-                return; // ✅ Sortir si pas de conversations
+                return;
             }
 
-            // Compter les choix de menu principal (événements avec menu_choice et user_input 1-5)
-            // On ne filtre pas par menu_name car il peut être vide
-            $menuChoices = ConversationEvent::whereIn('conversation_id', $conversationIds)
+            $menuStats = [];
+
+            ConversationEvent::whereIn('conversation_id', $conversationIds)
                 ->where('event_type', 'menu_choice')
-                ->whereIn('user_input', ['1', '2', '3', '4', '5'])
-                ->get();
+                ->get()
+                ->each(function ($event) use (&$menuStats) {
+                    $menuName = $event->menu_name
+                        ?: (($event->metadata['menu_choice'] ?? null) ?: 'menu_principal');
+                    $label = $event->choice_label
+                        ?: $event->user_input
+                        ?: 'unknown';
 
-            $menuCounts = [
-                'menu_vehicules_neufs' => 0,
-                'menu_sav' => 0,
-                'menu_reclamations' => 0,
-                'menu_club_vip' => 0,
-                'menu_agent' => 0,
-            ];
+                    $menuStats[$menuName][$label] = ($menuStats[$menuName][$label] ?? 0) + 1;
+                });
 
-            $mapping = [
-                '1' => 'menu_vehicules_neufs',
-                '2' => 'menu_sav',
-                '3' => 'menu_reclamations',
-                '4' => 'menu_club_vip',
-                '5' => 'menu_agent',
-            ];
-
-            foreach ($menuChoices as $choice) {
-                $input = $choice->user_input;
-                if (isset($mapping[$input])) {
-                    $menuCounts[$mapping[$input]]++;
-                }
-            }
-
-            // Mettre à jour les compteurs de menu
-            foreach ($menuCounts as $field => $count) {
-                $stat->$field = $count;
-            }
-
+            $stat->menu_stats = $menuStats;
             $stat->save();
+
         } catch (\Exception $e) {
             $this->error("Error calculating menu stats: " . $e->getMessage());
-            // ✅ Ne pas faire échouer toute la commande à cause d'une erreur de menu stats
         }
     }
 }

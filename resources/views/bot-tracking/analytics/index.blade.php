@@ -241,28 +241,26 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script>
 (function () {
-    var menuColors  = ['#6366f1','#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#64748b'];
+    var menuPalette  = ['#e2001a','#0ea5e9','#10b981','#f59e0b','#8b5cf6','#ec4899','#64748b','#f97316','#06b6d4','#84cc16'];
     var statusColors = ['#10b981','#3b82f6','#8b5cf6','#f59e0b','#9ca3af'];
 
-    // Menu Distribution Chart
+    // Menu Distribution Chart — dynamique
     var mCtx = document.getElementById('menuDistributionChart');
     if (mCtx) {
+        var menuData = @json(
+            collect($menuStats)->flatMap(function($choices, $menuName) {
+                return collect($choices)->map(function($c) use ($menuName) {
+                    return ['label' => $menuName . ' / ' . $c['label'], 'count' => $c['count']];
+                });
+            })->sortByDesc('count')->values()
+        );
         new Chart(mCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Informations','Demandes','Paris','Encaissement','Reclamations','Plaintes','Conseiller','FAQ'],
+                labels:   menuData.map(function(d){ return d.label; }),
                 datasets: [{
-                    data: [
-                        {{ $menuStats['informations'] ?? 0 }},
-                        {{ $menuStats['demandes'] ?? 0 }},
-                        {{ $menuStats['paris'] ?? 0 }},
-                        {{ $menuStats['encaissement'] ?? 0 }},
-                        {{ $menuStats['reclamations'] ?? 0 }},
-                        {{ $menuStats['plaintes'] ?? 0 }},
-                        {{ $menuStats['conseiller'] ?? 0 }},
-                        {{ $menuStats['faq'] ?? 0 }}
-                    ],
-                    backgroundColor: menuColors,
+                    data:            menuData.map(function(d){ return d.count; }),
+                    backgroundColor: menuData.map(function(_,i){ return menuPalette[i % menuPalette.length]; }),
                     borderWidth: 0
                 }]
             },

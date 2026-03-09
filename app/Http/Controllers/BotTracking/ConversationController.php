@@ -59,17 +59,20 @@ class ConversationController extends Controller
             ->orderBy('date', 'asc')
             ->get();
 
-        // Get menu distribution
-        $menuStats = [
-            'informations'  => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_informations'),
-            'demandes'      => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_demandes'),
-            'paris'         => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_paris'),
-            'encaissement'  => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_encaissement'),
-            'reclamations'  => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_reclamations'),
-            'plaintes'      => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_plaintes'),
-            'conseiller'    => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_conseiller'),
-            'faq'           => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_faq'),
-        ];
+        // Distribution dynamique des menus — s'adapte automatiquement à tout flow Twilio
+        $menuStats = ConversationEvent::where('event_type', 'menu_choice')
+            ->whereHas('conversation', fn($q) => $q->whereBetween('started_at', [$dateFromFull, $dateToFull]))
+            ->whereNotNull('menu_name')
+            ->select('menu_name', 'choice_label', 'user_input', DB::raw('count(*) as count'))
+            ->groupBy('menu_name', 'choice_label', 'user_input')
+            ->orderBy('menu_name')
+            ->orderByDesc('count')
+            ->get()
+            ->groupBy('menu_name')
+            ->map(fn($choices) => $choices->map(fn($c) => [
+                'label' => $c->choice_label ?: $c->user_input ?: '?',
+                'count' => $c->count,
+            ])->values());
 
         // Recent conversations
         $recentConversations = Conversation::with('events')
@@ -249,17 +252,20 @@ class ConversationController extends Controller
             ->orderBy('date', 'asc')
             ->get();
 
-        // Get menu distribution
-        $menuStats = [
-            'informations'  => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_informations'),
-            'demandes'      => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_demandes'),
-            'paris'         => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_paris'),
-            'encaissement'  => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_encaissement'),
-            'reclamations'  => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_reclamations'),
-            'plaintes'      => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_plaintes'),
-            'conseiller'    => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_conseiller'),
-            'faq'           => DailyStatistic::whereBetween('date', [$dateFrom, $dateTo])->sum('menu_faq'),
-        ];
+        // Distribution dynamique des menus — s'adapte automatiquement à tout flow Twilio
+        $menuStats = ConversationEvent::where('event_type', 'menu_choice')
+            ->whereHas('conversation', fn($q) => $q->whereBetween('started_at', [$dateFromFull, $dateToFull]))
+            ->whereNotNull('menu_name')
+            ->select('menu_name', 'choice_label', 'user_input', DB::raw('count(*) as count'))
+            ->groupBy('menu_name', 'choice_label', 'user_input')
+            ->orderBy('menu_name')
+            ->orderByDesc('count')
+            ->get()
+            ->groupBy('menu_name')
+            ->map(fn($choices) => $choices->map(fn($c) => [
+                'label' => $c->choice_label ?: $c->user_input ?: '?',
+                'count' => $c->count,
+            ])->values());
 
         // Status distribution
         $statusStats = Conversation::whereBetween('started_at', [$dateFromFull, $dateToFull])
