@@ -167,18 +167,20 @@ class CampaignContactController extends Controller
     }
 
     /**
-     * Importer tous les contacts depuis Chatwoot vers la table locale
+     * Importer uniquement les contacts de l'inbox configurée (CHATWOOT_WHATSAPP_INBOX_ID)
+     * en vérifiant contact_inboxes retourné par Chatwoot.
      */
     public function importFromChatwoot(): JsonResponse
     {
+        $inboxId  = (int) config('chatwoot.whatsapp_inbox_id');
         $imported = 0;
-        $skipped = 0;
-        $page = 1;
-        $maxPages = 50; // sécurité
+        $skipped  = 0;
+        $page     = 1;
+        $maxPages = 100; // sécurité
 
         try {
             while ($page <= $maxPages) {
-                $data = $this->chatwoot->listContacts($page, '-last_activity_at');
+                $data     = $this->chatwoot->listContacts($page, '-last_activity_at', true);
                 $contacts = $data['payload'] ?? [];
 
                 if (empty($contacts)) {
@@ -186,10 +188,22 @@ class CampaignContactController extends Controller
                 }
 
                 foreach ($contacts as $cwContact) {
-                    $phone = $cwContact['phone_number'] ?? null;
-                    $name = $cwContact['name'] ?? 'Contact';
+                    // Filtrer : garder uniquement les contacts qui ont un contact_inbox
+                    // correspondant à notre inbox (WhatsApp TotalEnergies CI)
+                    if ($inboxId) {
+                        $inboxes   = $cwContact['contact_inboxes'] ?? [];
+                        $inInbox   = collect($inboxes)->contains(
+                            fn($ci) => (int) ($ci['inbox']['id'] ?? $ci['inbox_id'] ?? 0) === $inboxId
+                        );
+                        if (!$inInbox) {
+                            $skipped++;
+                            continue;
+                        }
+                    }
 
-                    // Skip contacts sans numéro de téléphone
+                    $phone = $cwContact['phone_number'] ?? null;
+                    $name  = $cwContact['name'] ?? 'Contact';
+
                     if (empty($phone)) {
                         $skipped++;
                         continue;
@@ -204,7 +218,6 @@ class CampaignContactController extends Controller
                     // Vérifier doublon
                     $existing = Contact::where('phone_number', $phone)->first();
                     if ($existing) {
-                        // Mettre à jour le chatwoot_contact_id si manquant
                         if (!$existing->chatwoot_contact_id) {
                             $existing->update(['chatwoot_contact_id' => $cwContact['id']]);
                         }
@@ -214,11 +227,11 @@ class CampaignContactController extends Controller
 
                     try {
                         Contact::create([
-                            'name' => $name,
-                            'phone_number' => $phone,
-                            'email' => $cwContact['email'] ?? null,
+                            'name'                => $name,
+                            'phone_number'        => $phone,
+                            'email'               => $cwContact['email'] ?? null,
                             'chatwoot_contact_id' => $cwContact['id'],
-                            'created_by' => Auth::id(),
+                            'created_by'          => Auth::id(),
                         ]);
                         $imported++;
                     } catch (\Exception $e) {
@@ -226,11 +239,10 @@ class CampaignContactController extends Controller
                     }
                 }
 
-                // Vérifier s'il reste des pages
-                $meta = $data['meta'] ?? [];
-                $total = $meta['count'] ?? $meta['total'] ?? 0;
-                $perPage = 15;
-                $totalPages = $total > 0 ? (int) ceil($total / $perPage) : 1;
+                // Pagination
+                $meta       = $data['meta'] ?? [];
+                $total      = $meta['count'] ?? $meta['total'] ?? 0;
+                $totalPages = $total > 0 ? (int) ceil($total / 15) : 1;
 
                 if ($page >= $totalPages) {
                     break;
@@ -243,14 +255,14 @@ class CampaignContactController extends Controller
                 'success'  => true,
                 'imported' => $imported,
                 'skipped'  => $skipped,
-                'message'  => "{$imported} contact(s) importe(s), {$skipped} ignore(s)",
+                'message'  => "{$imported} contact(s) importé(s) depuis l'inbox {$inboxId}, {$skipped} ignoré(s)",
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'success' => false,
-                'message' => 'Erreur: ' . $e->getMessage(),
+                'success'  => false,
+                'message'  => 'Erreur: ' . $e->getMessage(),
                 'imported' => $imported,
-                'skipped' => $skipped,
+                'skipped'  => $skipped,
             ], 500);
         }
     }
