@@ -42,7 +42,7 @@
       "properties": {
         "offset": { "x": 100, "y": -170 },
         "method": "POST",
-        "content_type": "application/x-www-form-urlencoded;charset=utf-8",
+        "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
           { "value": "{{trigger.message.From}}", "key": "From" },
@@ -145,7 +145,7 @@
       "properties": {
         "offset": { "x": -1470, "y": 10 },
         "method": "POST",
-        "content_type": "application/x-www-form-urlencoded;charset=utf-8",
+        "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
           { "value": "{{flow.variables.conversation_id}}", "key": "conversation_id" },
@@ -286,7 +286,7 @@
       "properties": {
         "offset": { "x": -500, "y": 600 },
         "method": "POST",
-        "content_type": "application/x-www-form-urlencoded;charset=utf-8",
+        "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
           { "value": "{{flow.variables.conversation_id}}", "key": "conversation_id" }
