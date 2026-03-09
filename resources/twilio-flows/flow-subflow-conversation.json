@@ -198,6 +198,7 @@
         "add_twilio_auth": false,
         "parameters": [
           { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
+          { "value": "{{trigger.message.From}}", "key": "From" },
           { "value": "{{widgets.ask_name.inbound.Body}}", "key": "user_input" },
           { "value": "collect_name", "key": "widget_name" }
         ],
@@ -270,6 +271,7 @@
         "add_twilio_auth": false,
         "parameters": [
           { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
+          { "value": "{{trigger.message.From}}", "key": "From" },
           { "value": "{{widgets.ask_is_client.inbound.Body}}", "key": "user_input" },
           { "value": "check_client", "key": "widget_name" }
         ],
@@ -358,6 +360,7 @@
         "add_twilio_auth": false,
         "parameters": [
           { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
+          { "value": "{{trigger.message.From}}", "key": "From" },
           { "value": "{{widgets.ask_is_client_returning.inbound.Body}}", "key": "user_input" },
           { "value": "check_client", "key": "widget_name" }
         ],

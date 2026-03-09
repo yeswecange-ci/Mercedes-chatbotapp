@@ -280,8 +280,18 @@ class TwilioWebhookController extends Controller
             $conversationId = $request->input('conversation_id');
             $userInput = $request->input('user_input');
             $widgetName = $request->input('widget_name');
+            $from = $request->input('From', '');
+            $phoneNumber = str_replace('whatsapp:', '', $from);
 
-            $conversation = Conversation::find($conversationId);
+            $conversation = $conversationId ? Conversation::find($conversationId) : null;
+
+            // Fallback : chercher la dernière conversation active par numéro de téléphone
+            if (!$conversation && $phoneNumber) {
+                $conversation = Conversation::where('phone_number', $phoneNumber)
+                    ->whereIn('status', ['active', 'pending'])
+                    ->latest('started_at')
+                    ->first();
+            }
 
             if (!$conversation) {
                 return response()->json(['success' => false, 'error' => 'Conversation not found'], 404);
