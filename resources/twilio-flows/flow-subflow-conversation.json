@@ -109,7 +109,7 @@
       "transitions": [
         { "next": "ask_name", "event": "noMatch" },
         {
-          "next": "ask_is_client_returning",
+          "next": "check_status_known",
           "event": "match",
           "conditions": [
             {
@@ -124,6 +124,29 @@
       "properties": {
         "input": "{{trigger.params.client_has_name}}",
         "offset": { "x": 4224, "y": 1028 }
+      }
+    },
+    {
+      "name": "check_status_known",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "next": "menu_principal",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "Status Already Known",
+              "arguments": ["{{trigger.params.client_status_known}}"],
+              "type": "equal_to",
+              "value": "true"
+            }
+          ]
+        },
+        { "next": "ask_is_client_returning", "event": "noMatch" }
+      ],
+      "properties": {
+        "input": "{{trigger.params.client_status_known}}",
+        "offset": { "x": 4224, "y": 1200 }
       }
     },
     {

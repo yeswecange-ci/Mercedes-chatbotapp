@@ -93,6 +93,11 @@
             "type": "string",
             "value": "{{widgets.send_to_laravel_incoming.parsed.client_full_name}}",
             "key": "client_full_name"
+          },
+          {
+            "type": "string",
+            "value": "{{widgets.send_to_laravel_incoming.parsed.client_status_known}}",
+            "key": "client_status_known"
           }
         ],
         "offset": { "x": -550, "y": -20 }
@@ -305,7 +310,8 @@
           { "type": "string", "value": "{{flow.variables.session_id}}", "key": "session_id" },
           { "type": "string", "value": "{{flow.variables.phone_number}}", "key": "phone_number" },
           { "type": "string", "value": "{{flow.variables.client_has_name}}", "key": "client_has_name" },
-          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" }
+          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" },
+          { "type": "string", "value": "{{flow.variables.client_status_known}}", "key": "client_status_known" }
         ]
       }
     },
@@ -325,7 +331,8 @@
           { "type": "string", "value": "{{flow.variables.session_id}}", "key": "session_id" },
           { "type": "string", "value": "{{flow.variables.phone_number}}", "key": "phone_number" },
           { "type": "string", "value": "{{flow.variables.client_has_name}}", "key": "client_has_name" },
-          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" }
+          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" },
+          { "type": "string", "value": "{{flow.variables.client_status_known}}", "key": "client_status_known" }
         ]
       }
     },
@@ -345,7 +352,8 @@
           { "type": "string", "value": "{{flow.variables.session_id}}", "key": "session_id" },
           { "type": "string", "value": "{{flow.variables.phone_number}}", "key": "phone_number" },
           { "type": "string", "value": "{{flow.variables.client_has_name}}", "key": "client_has_name" },
-          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" }
+          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" },
+          { "type": "string", "value": "{{flow.variables.client_status_known}}", "key": "client_status_known" }
         ]
       }
     },
@@ -365,7 +373,8 @@
           { "type": "string", "value": "{{flow.variables.session_id}}", "key": "session_id" },
           { "type": "string", "value": "{{flow.variables.phone_number}}", "key": "phone_number" },
           { "type": "string", "value": "{{flow.variables.client_has_name}}", "key": "client_has_name" },
-          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" }
+          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" },
+          { "type": "string", "value": "{{flow.variables.client_status_known}}", "key": "client_status_known" }
         ]
       }
     },
@@ -385,7 +394,8 @@
           { "type": "string", "value": "{{flow.variables.session_id}}", "key": "session_id" },
           { "type": "string", "value": "{{flow.variables.phone_number}}", "key": "phone_number" },
           { "type": "string", "value": "{{flow.variables.client_has_name}}", "key": "client_has_name" },
-          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" }
+          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" },
+          { "type": "string", "value": "{{flow.variables.client_status_known}}", "key": "client_status_known" }
         ]
       }
     }
