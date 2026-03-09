@@ -78,7 +78,7 @@
         </form>
     </div>
 
-    <p class="text-center text-xs text-gray-400 mt-6">© 2026 TotalEnergies CI · Tous droits réservés</p>
+    <p class="text-center text-xs text-gray-400 mt-6">© 2026 Yeswecange · Tous droits réservés</p>
 
 @endsection
 

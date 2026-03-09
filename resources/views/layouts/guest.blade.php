@@ -30,7 +30,7 @@
                     <img src="{{ asset('images/logo_total.jpg') }}" alt="TotalEnergies" class="h-20 w-auto mx-auto mb-8 rounded-xl shadow-lg">
                     <h1 class="text-3xl font-bold text-white mb-4">Support Client</h1>
                     <p class="text-indigo-100 text-lg leading-relaxed max-w-sm">
-                        Plateforme de gestion des conversations WhatsApp pour les agents TotalEnergies CI.
+                        Plateforme de gestion des communications clients via WhatsApp.
                     </p>
                     <div class="mt-10 flex items-center justify-center gap-6 text-indigo-200 text-sm">
                         <div class="flex items-center gap-2">
