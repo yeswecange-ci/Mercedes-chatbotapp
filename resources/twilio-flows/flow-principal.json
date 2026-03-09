@@ -1,0 +1,397 @@
+{
+  "description": "Mercedes-Benz Bot - Flow Principal",
+  "states": [
+    {
+      "name": "Trigger",
+      "type": "trigger",
+      "transitions": [
+        {
+          "next": "send_to_laravel_incoming",
+          "event": "incomingMessage"
+        },
+        {
+          "event": "incomingCall"
+        },
+        {
+          "event": "incomingConversationMessage"
+        },
+        {
+          "event": "incomingRequest"
+        },
+        {
+          "event": "incomingParent"
+        }
+      ],
+      "properties": {
+        "offset": { "x": -10, "y": -360 }
+      }
+    },
+    {
+      "name": "send_to_laravel_incoming",
+      "type": "make-http-request",
+      "transitions": [
+        {
+          "next": "set_conversation_id",
+          "event": "success"
+        },
+        {
+          "next": "split_first",
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": { "x": 100, "y": -170 },
+        "method": "POST",
+        "content_type": "application/x-www-form-urlencoded;charset=utf-8",
+        "add_twilio_auth": false,
+        "parameters": [
+          { "value": "{{trigger.message.From}}", "key": "From" },
+          { "value": "{{trigger.message.Body}}", "key": "Body" },
+          { "value": "{{trigger.message.MessageSid}}", "key": "MessageSid" },
+          { "value": "{{trigger.message.ProfileName}}", "key": "ProfileName" }
+        ],
+        "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/incoming"
+      }
+    },
+    {
+      "name": "set_conversation_id",
+      "type": "set-variables",
+      "transitions": [
+        {
+          "next": "check_agent_available",
+          "event": "next"
+        }
+      ],
+      "properties": {
+        "variables": [
+          {
+            "type": "string",
+            "value": "{{widgets.send_to_laravel_incoming.parsed.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "type": "string",
+            "value": "{{widgets.send_to_laravel_incoming.parsed.session_id}}",
+            "key": "session_id"
+          },
+          {
+            "type": "string",
+            "value": "{{widgets.send_to_laravel_incoming.parsed.phone_number}}",
+            "key": "phone_number"
+          },
+          {
+            "type": "string",
+            "value": "{{widgets.send_to_laravel_incoming.parsed.agent_mode}}",
+            "key": "agent_mode"
+          },
+          {
+            "type": "string",
+            "value": "{{widgets.send_to_laravel_incoming.parsed.client_has_name}}",
+            "key": "client_has_name"
+          },
+          {
+            "type": "string",
+            "value": "{{widgets.send_to_laravel_incoming.parsed.client_full_name}}",
+            "key": "client_full_name"
+          }
+        ],
+        "offset": { "x": -550, "y": -20 }
+      }
+    },
+    {
+      "name": "check_agent_available",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "next": "split_first",
+          "event": "noMatch"
+        },
+        {
+          "next": "notify_agent_transfer",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to true",
+              "arguments": ["{{flow.variables.agent_mode}}"],
+              "type": "equal_to",
+              "value": "true"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{flow.variables.agent_mode}}",
+        "offset": { "x": -1290, "y": -330 }
+      }
+    },
+    {
+      "name": "notify_agent_transfer",
+      "type": "make-http-request",
+      "transitions": [
+        {
+          "next": "agent_takeover_notification",
+          "event": "success"
+        },
+        {
+          "next": "agent_takeover_notification",
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": { "x": -1470, "y": 10 },
+        "method": "POST",
+        "content_type": "application/x-www-form-urlencoded;charset=utf-8",
+        "add_twilio_auth": false,
+        "parameters": [
+          { "value": "{{flow.variables.conversation_id}}", "key": "conversation_id" },
+          { "value": "{{trigger.message.From}}", "key": "From" },
+          { "value": "{{trigger.message.Body}}", "key": "Body" },
+          { "value": "{{trigger.message.ProfileName}}", "key": "ProfileName" },
+          { "value": "Agent deja assigne - Mode agent actif", "key": "reason" }
+        ],
+        "url": "https://mbbot-dashboard.ywcdigital.com/api/webhooks/twilio/handoff"
+      }
+    },
+    {
+      "name": "agent_takeover_notification",
+      "type": "send-message",
+      "transitions": [
+        { "event": "sent" },
+        { "event": "failed" }
+      ],
+      "properties": {
+        "offset": { "x": -1110, "y": 240 },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "message_type": "custom",
+        "to": "{{contact.channel.address}}",
+        "body": "Bienvenue chez Mercedes-Benz Cote d'Ivoire. Votre message a ete recu. Un conseiller Mercedes-Benz prendra en charge votre demande dans quelques instants. Merci de votre patience."
+      }
+    },
+    {
+      "name": "split_first",
+      "type": "split-based-on",
+      "transitions": [
+        {
+          "next": "send_message_non_compris",
+          "event": "noMatch"
+        },
+        {
+          "next": "run_subflow_thegoat",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value contains mercedes12",
+              "arguments": ["{{trigger.message.Body}}"],
+              "type": "contains",
+              "value": "mercedes12"
+            }
+          ]
+        },
+        {
+          "next": "run_subflow_endpoint",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to Mercedes-Benz",
+              "arguments": ["{{trigger.message.Body}}"],
+              "type": "equal_to",
+              "value": "Mercedes-Benz"
+            }
+          ]
+        },
+        {
+          "next": "complete_conversation_no_match",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to josias",
+              "arguments": ["{{trigger.message.Body}}"],
+              "type": "equal_to",
+              "value": "josias"
+            }
+          ]
+        },
+        {
+          "next": "run_subflow_endpoint",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to endpoint",
+              "arguments": ["{{trigger.message.Body}}"],
+              "type": "equal_to",
+              "value": "endpoint"
+            }
+          ]
+        },
+        {
+          "next": "run_subflow_thegoat",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to thegoat",
+              "arguments": ["{{trigger.message.Body}}"],
+              "type": "equal_to",
+              "value": "thegoat"
+            }
+          ]
+        },
+        {
+          "next": "subflow_endpointv4",
+          "event": "match",
+          "conditions": [
+            {
+              "friendly_name": "If value equal_to mercedes",
+              "arguments": ["{{trigger.message.Body}}"],
+              "type": "equal_to",
+              "value": "mercedes"
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "input": "{{trigger.message.Body}}",
+        "offset": { "x": -80, "y": 60 }
+      }
+    },
+    {
+      "name": "send_message_non_compris",
+      "type": "send-message",
+      "transitions": [
+        { "event": "sent" },
+        { "event": "failed" }
+      ],
+      "properties": {
+        "offset": { "x": -860, "y": 290 },
+        "service": "{{trigger.message.InstanceSid}}",
+        "channel": "{{trigger.message.ChannelSid}}",
+        "from": "{{flow.channel.address}}",
+        "to": "{{contact.channel.address}}",
+        "body": "Desolé, je n'ai pas compris votre message. Pour demarrer une conversation, veuillez taper 'mercedes' ou 'Mercedes-Benz'."
+      }
+    },
+    {
+      "name": "complete_conversation_no_match",
+      "type": "make-http-request",
+      "transitions": [
+        { "event": "success" },
+        { "event": "failed" }
+      ],
+      "properties": {
+        "offset": { "x": -500, "y": 600 },
+        "method": "POST",
+        "content_type": "application/x-www-form-urlencoded;charset=utf-8",
+        "add_twilio_auth": false,
+        "parameters": [
+          { "value": "{{flow.variables.conversation_id}}", "key": "conversation_id" }
+        ],
+        "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/complete"
+      }
+    },
+    {
+      "name": "run_subflow_final",
+      "type": "run-subflow",
+      "transitions": [
+        { "event": "completed" },
+        { "event": "failed" }
+      ],
+      "properties": {
+        "flow_sid": "FWd86ff8b300bff4355cbc57c7f5e44765",
+        "flow_revision": "LatestPublished",
+        "offset": { "x": 90, "y": 550 },
+        "parameters": [
+          { "type": "string", "value": "{{flow.variables.conversation_id}}", "key": "conversation_id" },
+          { "type": "string", "value": "{{flow.variables.session_id}}", "key": "session_id" },
+          { "type": "string", "value": "{{flow.variables.phone_number}}", "key": "phone_number" },
+          { "type": "string", "value": "{{flow.variables.client_has_name}}", "key": "client_has_name" },
+          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" }
+        ]
+      }
+    },
+    {
+      "name": "run_subflow_ameliorer",
+      "type": "run-subflow",
+      "transitions": [
+        { "event": "completed" },
+        { "event": "failed" }
+      ],
+      "properties": {
+        "flow_sid": "FWb5d97a6605a6bfd1340f9fc6d5a21ce2",
+        "flow_revision": "LatestPublished",
+        "offset": { "x": 520, "y": 570 },
+        "parameters": [
+          { "type": "string", "value": "{{flow.variables.conversation_id}}", "key": "conversation_id" },
+          { "type": "string", "value": "{{flow.variables.session_id}}", "key": "session_id" },
+          { "type": "string", "value": "{{flow.variables.phone_number}}", "key": "phone_number" },
+          { "type": "string", "value": "{{flow.variables.client_has_name}}", "key": "client_has_name" },
+          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" }
+        ]
+      }
+    },
+    {
+      "name": "run_subflow_endpoint",
+      "type": "run-subflow",
+      "transitions": [
+        { "event": "completed" },
+        { "event": "failed" }
+      ],
+      "properties": {
+        "flow_sid": "FW5cb110917c68306ff5f60b048bac8544",
+        "flow_revision": "LatestPublished",
+        "offset": { "x": 830, "y": 320 },
+        "parameters": [
+          { "type": "string", "value": "{{flow.variables.conversation_id}}", "key": "conversation_id" },
+          { "type": "string", "value": "{{flow.variables.session_id}}", "key": "session_id" },
+          { "type": "string", "value": "{{flow.variables.phone_number}}", "key": "phone_number" },
+          { "type": "string", "value": "{{flow.variables.client_has_name}}", "key": "client_has_name" },
+          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" }
+        ]
+      }
+    },
+    {
+      "name": "run_subflow_thegoat",
+      "type": "run-subflow",
+      "transitions": [
+        { "event": "completed" },
+        { "event": "failed" }
+      ],
+      "properties": {
+        "flow_sid": "FWd0f53f1638ac2a65f374d0e14da70aea",
+        "flow_revision": "LatestPublished",
+        "offset": { "x": 970, "y": -30 },
+        "parameters": [
+          { "type": "string", "value": "{{flow.variables.conversation_id}}", "key": "conversation_id" },
+          { "type": "string", "value": "{{flow.variables.session_id}}", "key": "session_id" },
+          { "type": "string", "value": "{{flow.variables.phone_number}}", "key": "phone_number" },
+          { "type": "string", "value": "{{flow.variables.client_has_name}}", "key": "client_has_name" },
+          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" }
+        ]
+      }
+    },
+    {
+      "name": "subflow_endpointv4",
+      "type": "run-subflow",
+      "transitions": [
+        { "event": "completed" },
+        { "event": "failed" }
+      ],
+      "properties": {
+        "flow_sid": "FWbe9b3ddf1ca31f1a9a7b47b030f7a93b",
+        "flow_revision": "LatestPublished",
+        "offset": { "x": 1190, "y": 240 },
+        "parameters": [
+          { "type": "string", "value": "{{flow.variables.conversation_id}}", "key": "conversation_id" },
+          { "type": "string", "value": "{{flow.variables.session_id}}", "key": "session_id" },
+          { "type": "string", "value": "{{flow.variables.phone_number}}", "key": "phone_number" },
+          { "type": "string", "value": "{{flow.variables.client_has_name}}", "key": "client_has_name" },
+          { "type": "string", "value": "{{flow.variables.client_full_name}}", "key": "client_full_name" }
+        ]
+      }
+    }
+  ],
+  "initial_state": "Trigger",
+  "flags": {
+    "allow_concurrent_calls": true
+  }
+}
