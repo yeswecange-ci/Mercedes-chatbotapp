@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>@yield('title', 'Dashboard') - TotalEnergies Support</title>
+        <title>@yield('title', 'Dashboard') - Mercedes Support</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&display=swap" rel="stylesheet" />
@@ -45,7 +45,7 @@
                 {{-- Logo --}}
                 <div class="h-16 flex items-center px-6 border-b border-gray-100">
                     <div class="flex items-center">
-                        <img src="{{ asset('images/logo_total.jpg') }}" alt="TotalEnergies" class="h-10 w-auto">
+                        <img src="{{ asset('images/logo_mercedes.png') }}" alt="Mercedes" class="h-10 w-auto">
                     </div>
                 </div>
 
@@ -349,7 +349,7 @@
             <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
                 <header class="md:hidden h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 flex-shrink-0">
                     <div class="flex items-center">
-                        <img src="{{ asset('images/logo_total.jpg') }}" alt="TotalEnergies" class="h-8 w-auto rounded">
+                        <img src="{{ asset('images/logo_mercedes.png') }}" alt="Mercedes" class="h-8 w-auto rounded">
                     </div>
                     <div class="flex items-center gap-3">
                         @if(auth()->user()?->isAdmin())

@@ -58,7 +58,7 @@ class ClientController extends Controller
         // Get statistics
         $stats = [
             'total_clients' => Client::count(),
-            'sportcash_clients' => Client::isClient()->count(), // clé conservée pour rétrocompatibilité vue
+            'mercedes_clients' => Client::isClient()->count(), // clé conservée pour rétrocompatibilité vue
             'non_clients' => Client::isNotClient()->count(),
             'recent_clients' => Client::recent(30)->count(),
             'total_interactions' => Client::sum('interaction_count'),

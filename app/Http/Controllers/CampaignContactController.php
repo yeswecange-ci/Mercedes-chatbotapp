@@ -189,7 +189,7 @@ class CampaignContactController extends Controller
 
                 foreach ($contacts as $cwContact) {
                     // Filtrer : garder uniquement les contacts qui ont un contact_inbox
-                    // correspondant à notre inbox (WhatsApp TotalEnergies CI)
+                    // correspondant à notre inbox (WhatsApp Mercedes CI)
                     if ($inboxId) {
                         $inboxes   = $cwContact['contact_inboxes'] ?? [];
                         $inInbox   = collect($inboxes)->contains(

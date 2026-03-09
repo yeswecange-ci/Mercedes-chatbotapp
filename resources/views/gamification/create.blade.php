@@ -77,7 +77,7 @@
                         </label>
                         <input type="text" name="name" required
                                value="{{ old('name', $game?->name) }}"
-                               placeholder="Ex: Grand Quiz TotalEnergies Été 2026"
+                               placeholder="Ex: Grand Quiz Mercedes Été 2026"
                                class="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent">
                     </div>
 

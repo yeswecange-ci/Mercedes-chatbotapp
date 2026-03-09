@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Connexion - TotalEnergies Support</title>
+        <title>Connexion - Mercedes Support</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&display=swap" rel="stylesheet" />
@@ -18,7 +18,7 @@
     </head>
     <body class="antialiased">
         <div class="min-h-screen flex">
-            {{-- Panneau gauche TotalEnergies --}}
+            {{-- Panneau gauche Mercedes --}}
             <div class="hidden lg:flex lg:w-1/2 bg-indigo-600 flex-col items-center justify-center px-12 relative overflow-hidden">
                 {{-- Fond décoratif --}}
                 <div class="absolute inset-0 opacity-10">
@@ -27,7 +27,7 @@
                 </div>
                 {{-- Contenu --}}
                 <div class="relative z-10 text-center">
-                    <img src="{{ asset('images/logo_total.jpg') }}" alt="TotalEnergies" class="h-20 w-auto mx-auto mb-8 rounded-xl shadow-lg">
+                    <img src="{{ asset('images/logo_mercedes.png') }}" alt="Mercedes" class="h-20 w-auto mx-auto mb-8 rounded-xl shadow-lg">
                     <h1 class="text-3xl font-bold text-white mb-4">Support Client</h1>
                     <p class="text-indigo-100 text-lg leading-relaxed max-w-sm">
                         Plateforme de gestion des communications clients via WhatsApp.
@@ -54,7 +54,7 @@
                 <div class="w-full max-w-md">
                     {{-- Logo mobile --}}
                     <div class="lg:hidden text-center mb-8">
-                        <img src="{{ asset('images/logo_total.jpg') }}" alt="TotalEnergies" class="h-14 w-auto mx-auto rounded-xl">
+                        <img src="{{ asset('images/logo_mercedes.png') }}" alt="Mercedes" class="h-14 w-auto mx-auto rounded-xl">
                     </div>
                     @yield('content')
                 </div>
