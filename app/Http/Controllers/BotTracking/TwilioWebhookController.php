@@ -88,7 +88,8 @@ class TwilioWebhookController extends Controller
                         $updates['whatsapp_profile_name'] = $profileName;
                     }
 
-                    if (!$conversation->client_full_name && $client->client_full_name) {
+                    // Sync client_full_name depuis clients si différent (nom mis à jour entre deux sessions)
+                    if ($client->client_full_name && $conversation->client_full_name !== $client->client_full_name) {
                         $updates['client_full_name'] = $client->client_full_name;
                     }
 
@@ -230,7 +231,24 @@ class TwilioWebhookController extends Controller
             }
 
             if (!$conversation) {
-                return response()->json(['success' => false, 'error' => 'Conversation not found'], 404);
+                // /incoming a échoué — créer une conversation de secours pour ne pas perdre l'événement
+                if (!$phoneNumber) {
+                    return response()->json(['success' => false, 'error' => 'Conversation not found'], 404);
+                }
+                $client = \App\Models\Client::findOrCreateByPhone($phoneNumber);
+                $conversation = Conversation::create([
+                    'phone_number'          => $phoneNumber,
+                    'session_id'            => uniqid('session_', true),
+                    'whatsapp_profile_name' => 'Client WhatsApp',
+                    'client_full_name'      => $client->client_full_name,
+                    'is_client'             => $client->is_client,
+                    'started_at'            => now(),
+                    'last_activity_at'      => now(),
+                    'current_menu'          => 'main_menu',
+                    'status'                => 'active',
+                ]);
+                DailyStatistic::today()->increment('total_conversations');
+                Log::warning('Conversation created as fallback in handleMenuChoice', ['phone' => $phoneNumber]);
             }
 
             // Update conversation menu + menu_path dans une transaction avec verrou
@@ -304,7 +322,24 @@ class TwilioWebhookController extends Controller
             }
 
             if (!$conversation) {
-                return response()->json(['success' => false, 'error' => 'Conversation not found'], 404);
+                // /incoming a échoué — créer une conversation de secours pour ne pas perdre l'événement
+                if (!$phoneNumber) {
+                    return response()->json(['success' => false, 'error' => 'Conversation not found'], 404);
+                }
+                $client = \App\Models\Client::findOrCreateByPhone($phoneNumber);
+                $conversation = Conversation::create([
+                    'phone_number'          => $phoneNumber,
+                    'session_id'            => uniqid('session_', true),
+                    'whatsapp_profile_name' => 'Client WhatsApp',
+                    'client_full_name'      => $client->client_full_name,
+                    'is_client'             => $client->is_client,
+                    'started_at'            => now(),
+                    'last_activity_at'      => now(),
+                    'current_menu'          => 'main_menu',
+                    'status'                => 'active',
+                ]);
+                DailyStatistic::today()->increment('total_conversations');
+                Log::warning('Conversation created as fallback in handleFreeInput', ['phone' => $phoneNumber]);
             }
 
             // Update last activity
@@ -341,7 +376,18 @@ class TwilioWebhookController extends Controller
             Log::info('Twilio Complete Conversation', $request->all());
 
             $conversationId = $request->input('conversation_id');
-            $conversation = Conversation::find($conversationId);
+            $from = $request->input('From', '');
+            $phoneNumber = str_replace('whatsapp:', '', $from);
+
+            $conversation = $conversationId ? Conversation::find($conversationId) : null;
+
+            // Fallback par numéro de téléphone
+            if (!$conversation && $phoneNumber) {
+                $conversation = Conversation::where('phone_number', $phoneNumber)
+                    ->whereIn('status', ['active', 'pending'])
+                    ->latest('started_at')
+                    ->first();
+            }
 
             if (!$conversation) {
                 return response()->json(['success' => false, 'error' => 'Conversation not found'], 404);

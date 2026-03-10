@@ -1158,7 +1158,7 @@
           ]
         },
         {
-          "next": "send_goodbye",
+          "next": "complete_convo",
           "event": "match",
           "conditions": [
             {
@@ -1673,7 +1673,7 @@
           ]
         },
         {
-          "next": "send_goodbye",
+          "next": "complete_convo",
           "event": "match",
           "conditions": [
             {
@@ -1868,7 +1868,7 @@
           ]
         },
         {
-          "next": "send_goodbye",
+          "next": "complete_convo",
           "event": "match",
           "conditions": [
             {
@@ -2187,7 +2187,7 @@
           ]
         },
         {
-          "next": "send_goodbye",
+          "next": "complete_convo",
           "event": "match",
           "conditions": [
             {
@@ -2382,7 +2382,7 @@
           ]
         },
         {
-          "next": "send_goodbye",
+          "next": "complete_convo",
           "event": "match",
           "conditions": [
             {
@@ -3162,6 +3162,40 @@
           }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
+      }
+    },
+    {
+      "name": "complete_convo",
+      "type": "make-http-request",
+      "transitions": [
+        {
+          "next": "send_goodbye",
+          "event": "success"
+        },
+        {
+          "next": "send_goodbye",
+          "event": "failed"
+        }
+      ],
+      "properties": {
+        "offset": {
+          "x": 5783,
+          "y": 3672
+        },
+        "method": "POST",
+        "content_type": "application/json",
+        "add_twilio_auth": false,
+        "parameters": [
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          }
+        ],
+        "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/complete"
       }
     }
   ],
