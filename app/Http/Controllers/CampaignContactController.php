@@ -168,7 +168,8 @@ class CampaignContactController extends Controller
 
     /**
      * Importer uniquement les contacts de l'inbox configurée (CHATWOOT_WHATSAPP_INBOX_ID)
-     * en vérifiant contact_inboxes retourné par Chatwoot.
+     * via les conversations de cette inbox (le filtre inbox_id fonctionne sur /conversations).
+     * Le contact est extrait de meta.sender de chaque conversation.
      */
     public function importFromChatwoot(): JsonResponse
     {
@@ -176,32 +177,32 @@ class CampaignContactController extends Controller
         $imported = 0;
         $skipped  = 0;
         $page     = 1;
-        $maxPages = 100; // sécurité
+        $maxPages = 200;
+        $seen     = []; // déduplique par téléphone dans la même session
 
         try {
             while ($page <= $maxPages) {
-                // include_contact_inboxes=true pour pouvoir filtrer côté PHP
-                // (Chatwoot ignore le paramètre inbox_id sur l'endpoint /contacts)
-                $data     = $this->chatwoot->listContacts($page, '-last_activity_at', true);
-                $contacts = $data['payload'] ?? [];
+                $data  = $this->chatwoot->listConversations(status: 'all', page: $page, inboxId: $inboxId);
+                $convs = $data['data']['payload'] ?? $data['payload'] ?? [];
 
-                if (empty($contacts)) {
+                if (empty($convs)) {
                     break;
                 }
 
-                foreach ($contacts as $cwContact) {
-                    // Filtrer : ne garder que les contacts présents dans l'inbox configurée
-                    $contactInboxes = $cwContact['contact_inboxes'] ?? [];
-                    $inInbox = collect($contactInboxes)->contains(
-                        fn($ci) => (int) ($ci['inbox']['id'] ?? $ci['inbox_id'] ?? 0) === $inboxId
-                    );
-                    if (!$inInbox) {
-                        $skipped++;
+                foreach ($convs as $conv) {
+                    // Sécurité : ne traiter que les convs de l'inbox cible
+                    if ((int) ($conv['inbox_id'] ?? 0) !== $inboxId) {
                         continue;
                     }
 
-                    $phone = $cwContact['phone_number'] ?? null;
-                    $name  = $cwContact['name'] ?? 'Contact';
+                    $sender = $conv['meta']['sender'] ?? null;
+                    if (!$sender) {
+                        continue;
+                    }
+
+                    $phone = $sender['phone_number'] ?? null;
+                    $name  = $sender['name'] ?? 'Contact';
+                    $cwId  = $sender['id'] ?? null;
 
                     if (empty($phone)) {
                         $skipped++;
@@ -214,11 +215,17 @@ class CampaignContactController extends Controller
                         $phone = '+' . $phone;
                     }
 
-                    // Vérifier doublon
+                    // Dédupliquer dans cette session
+                    if (isset($seen[$phone])) {
+                        continue;
+                    }
+                    $seen[$phone] = true;
+
+                    // Vérifier doublon en base
                     $existing = Contact::where('phone_number', $phone)->first();
                     if ($existing) {
-                        if (!$existing->chatwoot_contact_id) {
-                            $existing->update(['chatwoot_contact_id' => $cwContact['id']]);
+                        if ($cwId && !$existing->chatwoot_contact_id) {
+                            $existing->update(['chatwoot_contact_id' => $cwId]);
                         }
                         $skipped++;
                         continue;
@@ -228,8 +235,8 @@ class CampaignContactController extends Controller
                         Contact::create([
                             'name'                => $name,
                             'phone_number'        => $phone,
-                            'email'               => $cwContact['email'] ?? null,
-                            'chatwoot_contact_id' => $cwContact['id'],
+                            'email'               => $sender['email'] ?? null,
+                            'chatwoot_contact_id' => $cwId,
                             'created_by'          => Auth::id(),
                         ]);
                         $imported++;
@@ -238,10 +245,10 @@ class CampaignContactController extends Controller
                     }
                 }
 
-                // Pagination
-                $meta       = $data['meta'] ?? [];
-                $total      = $meta['count'] ?? $meta['total'] ?? 0;
-                $totalPages = $total > 0 ? (int) ceil($total / 15) : 1;
+                // Pagination : 25 convs par page par défaut
+                $meta       = $data['data']['meta'] ?? $data['meta'] ?? [];
+                $allCount   = $meta['all_count'] ?? 0;
+                $totalPages = $allCount > 0 ? (int) ceil($allCount / 25) : 1;
 
                 if ($page >= $totalPages) {
                     break;
