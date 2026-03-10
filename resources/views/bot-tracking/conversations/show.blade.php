@@ -90,18 +90,32 @@
             </div>
         </div>
 
-        {{-- Menu Path --}}
+        {{-- Parcours menu reconstruit depuis les événements --}}
         @php
-            $rawPath = $conversation->menu_path;
-            $menuPathArray = is_array($rawPath) ? $rawPath : (is_string($rawPath) ? (json_decode($rawPath, true) ?? []) : []);
+            $menuEvents = $conversation->events->where('event_type', 'menu_choice')->values();
         @endphp
-        @if(!empty($menuPathArray))
+        @if($menuEvents->isNotEmpty())
         <div class="bg-white rounded-xl border border-gray-200 p-5 mb-6">
-            <h3 class="text-sm font-semibold text-gray-700 mb-3">Parcours menu (cette session)</h3>
+            <h3 class="text-sm font-semibold text-gray-700 mb-4">Parcours dans les menus</h3>
             <div class="flex flex-wrap items-center gap-2">
-                @foreach($menuPathArray as $step)
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">{{ $step }}</span>
-                    @if(!$loop->last)<span class="text-gray-300 text-sm">&rarr;</span>@endif
+                @foreach($menuEvents as $me)
+                    @php
+                        $menuLabels = [
+                            'menu_principal' => 'Menu principal',
+                            'menu_vn'        => 'Véhicules neufs',
+                            'menu_sav'       => 'SAV',
+                            'menu_vip'       => 'Club VIP',
+                        ];
+                        $menuLabel = $menuLabels[$me->menu_name] ?? $me->menu_name;
+                        $choiceLabel = $me->choice_label ?: $me->user_input ?: '?';
+                    @endphp
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs text-gray-400 mb-1">{{ $menuLabel }}</span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
+                            {{ $choiceLabel }}
+                        </span>
+                    </div>
+                    @if(!$loop->last)<span class="text-gray-300 text-lg mt-3">&rarr;</span>@endif
                 @endforeach
             </div>
         </div>
@@ -210,6 +224,16 @@
                             <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ str_replace('_', ' ', $event->event_type) }}</span>
                             <span class="text-xs text-gray-400">{{ $ts ? \Carbon\Carbon::parse($ts)->format('d/m/Y H:i:s') : '' }}</span>
                         </div>
+                        @if($event->event_type === 'menu_choice')
+                        <div class="bg-indigo-50 rounded-lg px-3 py-2 mb-1 border-l-2 border-indigo-400">
+                            @if($event->menu_name)
+                                <p class="text-xs text-indigo-400 mb-0.5">{{ $event->menu_name }}</p>
+                            @endif
+                            <p class="text-sm font-medium text-indigo-800">
+                                {{ $event->choice_label ?: $event->user_input ?: '?' }}
+                            </p>
+                        </div>
+                        @else
                         @if($event->user_input)
                         <div class="bg-gray-50 rounded-lg px-3 py-2 mb-1 border-l-2 border-indigo-400">
                             <p class="text-xs text-gray-500 mb-0.5">Saisie utilisateur</p>
@@ -224,6 +248,7 @@
                         @endif
                         @if($event->widget_name)
                             <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">Widget: {{ $event->widget_name }}</span>
+                        @endif
                         @endif
                         @if($event->metadata)
                         <details class="mt-1">

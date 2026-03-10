@@ -213,11 +213,21 @@ class TwilioWebhookController extends Controller
             Log::info('Twilio Menu Choice', $request->all());
 
             $conversationId = $request->input('conversation_id');
-            $menuChoice     = $request->input('menu_choice');   // nom du widget/menu
-            $userInput      = $request->input('user_input');    // valeur saisie (ex: "1")
-            $choiceLabel    = $request->input('choice_label', $userInput); // label lisible (ex: "Informations")
+            $menuChoice     = $request->input('menu_name') ?: $request->input('menu_choice'); // subflow envoie menu_name
+            $userInput      = $request->input('user_input');
+            $choiceLabel    = $request->input('choice_label', $userInput);
+            $from           = $request->input('From', '');
+            $phoneNumber    = str_replace('whatsapp:', '', $from);
 
-            $conversation = Conversation::find($conversationId);
+            $conversation = $conversationId ? Conversation::find($conversationId) : null;
+
+            // Fallback par numéro de téléphone si conversation_id absent
+            if (!$conversation && $phoneNumber) {
+                $conversation = Conversation::where('phone_number', $phoneNumber)
+                    ->whereIn('status', ['active', 'pending'])
+                    ->latest('started_at')
+                    ->first();
+            }
 
             if (!$conversation) {
                 return response()->json(['success' => false, 'error' => 'Conversation not found'], 404);

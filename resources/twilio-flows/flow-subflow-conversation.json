@@ -5,30 +5,50 @@
       "name": "Trigger",
       "type": "trigger",
       "transitions": [
-        { "event": "incomingMessage" },
-        { "event": "incomingCall" },
-        { "event": "incomingConversationMessage" },
-        { "event": "incomingRequest" },
+        {
+          "event": "incomingMessage"
+        },
+        {
+          "event": "incomingCall"
+        },
+        {
+          "event": "incomingConversationMessage"
+        },
+        {
+          "event": "incomingRequest"
+        },
         {
           "next": "Copy_of_delay_welcome",
           "event": "incomingParent"
         }
       ],
       "properties": {
-        "offset": { "x": 4558, "y": 0 }
+        "offset": {
+          "x": 4558,
+          "y": 0
+        }
       }
     },
     {
       "name": "Copy_of_delay_welcome",
       "type": "run-function",
       "transitions": [
-        { "next": "split_check_value_name", "event": "success" },
-        { "next": "split_check_value_name", "event": "fail" }
+        {
+          "next": "split_check_value_name",
+          "event": "success"
+        },
+        {
+          "next": "split_check_value_name",
+          "event": "fail"
+        }
       ],
       "properties": {
         "service_sid": "ZSb7de9fd35671e380ad53677e2cf57770",
         "environment_sid": "ZEc4ec4248edabbbb0cddf19a5c41ef926",
-        "offset": { "x": 4740, "y": 220 },
+        "offset": {
+          "x": 4740,
+          "y": 220
+        },
         "function_sid": "ZHe612874f4ed88f0f570e65c3a78d3411",
         "url": "https://merco-9614.twil.io/add_delay"
       }
@@ -37,14 +57,19 @@
       "name": "split_check_value_name",
       "type": "split-based-on",
       "transitions": [
-        { "next": "send_message_welcome_vide", "event": "noMatch" },
+        {
+          "next": "send_message_welcome_vide",
+          "event": "noMatch"
+        },
         {
           "next": "send_message_welcome",
           "event": "match",
           "conditions": [
             {
               "friendly_name": "ProfileName is not blank",
-              "arguments": ["{{trigger.message.ProfileName}}"],
+              "arguments": [
+                "{{trigger.message.ProfileName}}"
+              ],
               "type": "is_not_blank",
               "value": "Is Not Blank"
             }
@@ -53,18 +78,29 @@
       ],
       "properties": {
         "input": "{{trigger.message.ProfileName}}",
-        "offset": { "x": 4170, "y": 430 }
+        "offset": {
+          "x": 4170,
+          "y": 430
+        }
       }
     },
     {
       "name": "send_message_welcome",
       "type": "send-message",
       "transitions": [
-        { "next": "delay_welcome", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "delay_welcome",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 4750, "y": 650 },
+        "offset": {
+          "x": 4750,
+          "y": 650
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -76,11 +112,19 @@
       "name": "send_message_welcome_vide",
       "type": "send-message",
       "transitions": [
-        { "next": "delay_welcome", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "delay_welcome",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 3950, "y": 640 },
+        "offset": {
+          "x": 3950,
+          "y": 640
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -92,13 +136,22 @@
       "name": "delay_welcome",
       "type": "run-function",
       "transitions": [
-        { "next": "get_client_status", "event": "success" },
-        { "next": "get_client_status", "event": "fail" }
+        {
+          "next": "get_client_status",
+          "event": "success"
+        },
+        {
+          "next": "get_client_status",
+          "event": "fail"
+        }
       ],
       "properties": {
         "service_sid": "ZSb7de9fd35671e380ad53677e2cf57770",
         "environment_sid": "ZEc4ec4248edabbbb0cddf19a5c41ef926",
-        "offset": { "x": 4267, "y": 852 },
+        "offset": {
+          "x": 4267,
+          "y": 852
+        },
         "function_sid": "ZHe612874f4ed88f0f570e65c3a78d3411",
         "url": "https://merco-9614.twil.io/add_delay"
       }
@@ -107,16 +160,28 @@
       "name": "get_client_status",
       "type": "make-http-request",
       "transitions": [
-        { "next": "check_client_exists", "event": "success" },
-        { "next": "check_client_exists", "event": "failed" }
+        {
+          "next": "check_client_exists",
+          "event": "success"
+        },
+        {
+          "next": "check_client_exists",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 4224, "y": 1028 },
+        "offset": {
+          "x": 4224,
+          "y": 1028
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.message.From}}", "key": "From" }
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/client-check"
       }
@@ -125,14 +190,19 @@
       "name": "check_client_exists",
       "type": "split-based-on",
       "transitions": [
-        { "next": "ask_name", "event": "noMatch" },
+        {
+          "next": "ask_name",
+          "event": "noMatch"
+        },
         {
           "next": "check_status_known",
           "event": "match",
           "conditions": [
             {
               "friendly_name": "Client Has Name",
-              "arguments": ["{{widgets.get_client_status.parsed.client_has_name}}"],
+              "arguments": [
+                "{{widgets.get_client_status.parsed.client_has_name}}"
+              ],
               "type": "equal_to",
               "value": "true"
             }
@@ -141,7 +211,10 @@
       ],
       "properties": {
         "input": "{{widgets.get_client_status.parsed.client_has_name}}",
-        "offset": { "x": 4224, "y": 1204 }
+        "offset": {
+          "x": 4224,
+          "y": 1204
+        }
       }
     },
     {
@@ -154,29 +227,48 @@
           "conditions": [
             {
               "friendly_name": "Status Already Known",
-              "arguments": ["{{widgets.get_client_status.parsed.client_status_known}}"],
+              "arguments": [
+                "{{widgets.get_client_status.parsed.client_status_known}}"
+              ],
               "type": "equal_to",
               "value": "true"
             }
           ]
         },
-        { "next": "ask_is_client_returning", "event": "noMatch" }
+        {
+          "next": "ask_is_client_returning",
+          "event": "noMatch"
+        }
       ],
       "properties": {
         "input": "{{widgets.get_client_status.parsed.client_status_known}}",
-        "offset": { "x": 4224, "y": 1380 }
+        "offset": {
+          "x": 4224,
+          "y": 1380
+        }
       }
     },
     {
       "name": "ask_name",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "save_client_name", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "save_client_name",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 394, "y": 1204 },
+        "offset": {
+          "x": 394,
+          "y": 1204
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -188,19 +280,40 @@
       "name": "save_client_name",
       "type": "make-http-request",
       "transitions": [
-        { "next": "ask_is_client", "event": "success" },
-        { "next": "ask_is_client", "event": "failed" }
+        {
+          "next": "ask_is_client",
+          "event": "success"
+        },
+        {
+          "next": "ask_is_client",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 394, "y": 1380 },
+        "offset": {
+          "x": 394,
+          "y": 1380
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "{{trigger.message.From}}", "key": "From" },
-          { "value": "{{widgets.ask_name.inbound.Body}}", "key": "user_input" },
-          { "value": "collect_name", "key": "widget_name" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "{{widgets.ask_name.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "collect_name",
+            "key": "widget_name"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/free-input"
       }
@@ -209,12 +322,23 @@
       "name": "ask_is_client",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "split_is_client", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "split_is_client",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 303, "y": 1557 },
+        "offset": {
+          "x": 303,
+          "y": 1557
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -226,14 +350,19 @@
       "name": "split_is_client",
       "type": "split-based-on",
       "transitions": [
-        { "next": "invalid_is_client", "event": "noMatch" },
+        {
+          "next": "invalid_is_client",
+          "event": "noMatch"
+        },
         {
           "next": "save_is_client_new",
           "event": "match",
           "conditions": [
             {
               "friendly_name": "Oui",
-              "arguments": ["{{widgets.ask_is_client.inbound.Body}}"],
+              "arguments": [
+                "{{widgets.ask_is_client.inbound.Body}}"
+              ],
               "type": "equal_to",
               "value": "1"
             }
@@ -245,7 +374,9 @@
           "conditions": [
             {
               "friendly_name": "Non",
-              "arguments": ["{{widgets.ask_is_client.inbound.Body}}"],
+              "arguments": [
+                "{{widgets.ask_is_client.inbound.Body}}"
+              ],
               "type": "equal_to",
               "value": "2"
             }
@@ -254,26 +385,50 @@
       ],
       "properties": {
         "input": "{{widgets.ask_is_client.inbound.Body}}",
-        "offset": { "x": 119, "y": 1734 }
+        "offset": {
+          "x": 119,
+          "y": 1734
+        }
       }
     },
     {
       "name": "save_is_client_new",
       "type": "make-http-request",
       "transitions": [
-        { "next": "menu_principal", "event": "success" },
-        { "next": "menu_principal", "event": "failed" }
+        {
+          "next": "menu_principal",
+          "event": "success"
+        },
+        {
+          "next": "menu_principal",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 119, "y": 1910 },
+        "offset": {
+          "x": 119,
+          "y": 1910
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "{{trigger.message.From}}", "key": "From" },
-          { "value": "{{widgets.ask_is_client.inbound.Body}}", "key": "user_input" },
-          { "value": "check_client", "key": "widget_name" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "{{widgets.ask_is_client.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "check_client",
+            "key": "widget_name"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/free-input"
       }
@@ -282,11 +437,19 @@
       "name": "invalid_is_client",
       "type": "send-message",
       "transitions": [
-        { "next": "ask_is_client", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "ask_is_client",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 344, "y": 1910 },
+        "offset": {
+          "x": 344,
+          "y": 1910
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -298,12 +461,23 @@
       "name": "ask_is_client_returning",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "split_is_client_returning", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "split_is_client_returning",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 7309, "y": 1557 },
+        "offset": {
+          "x": 7309,
+          "y": 1557
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -315,14 +489,19 @@
       "name": "split_is_client_returning",
       "type": "split-based-on",
       "transitions": [
-        { "next": "invalid_is_client_returning", "event": "noMatch" },
+        {
+          "next": "invalid_is_client_returning",
+          "event": "noMatch"
+        },
         {
           "next": "save_is_client_returning",
           "event": "match",
           "conditions": [
             {
               "friendly_name": "Oui",
-              "arguments": ["{{widgets.ask_is_client_returning.inbound.Body}}"],
+              "arguments": [
+                "{{widgets.ask_is_client_returning.inbound.Body}}"
+              ],
               "type": "equal_to",
               "value": "1"
             }
@@ -334,7 +513,9 @@
           "conditions": [
             {
               "friendly_name": "Non",
-              "arguments": ["{{widgets.ask_is_client_returning.inbound.Body}}"],
+              "arguments": [
+                "{{widgets.ask_is_client_returning.inbound.Body}}"
+              ],
               "type": "equal_to",
               "value": "2"
             }
@@ -343,26 +524,50 @@
       ],
       "properties": {
         "input": "{{widgets.ask_is_client_returning.inbound.Body}}",
-        "offset": { "x": 6832, "y": 1734 }
+        "offset": {
+          "x": 6832,
+          "y": 1734
+        }
       }
     },
     {
       "name": "save_is_client_returning",
       "type": "make-http-request",
       "transitions": [
-        { "next": "menu_principal", "event": "success" },
-        { "next": "menu_principal", "event": "failed" }
+        {
+          "next": "menu_principal",
+          "event": "success"
+        },
+        {
+          "next": "menu_principal",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 6832, "y": 1910 },
+        "offset": {
+          "x": 6832,
+          "y": 1910
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "{{trigger.message.From}}", "key": "From" },
-          { "value": "{{widgets.ask_is_client_returning.inbound.Body}}", "key": "user_input" },
-          { "value": "check_client", "key": "widget_name" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "{{widgets.ask_is_client_returning.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "check_client",
+            "key": "widget_name"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/free-input"
       }
@@ -371,11 +576,19 @@
       "name": "invalid_is_client_returning",
       "type": "send-message",
       "transitions": [
-        { "next": "ask_is_client_returning", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "ask_is_client_returning",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 7473, "y": 1910 },
+        "offset": {
+          "x": 7473,
+          "y": 1910
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -387,12 +600,23 @@
       "name": "menu_principal",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "split_menu_principal", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "split_menu_principal",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 6731, "y": 2087 },
+        "offset": {
+          "x": 6731,
+          "y": 2087
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -404,47 +628,106 @@
       "name": "split_menu_principal",
       "type": "split-based-on",
       "transitions": [
-        { "next": "invalid_menu_principal", "event": "noMatch" },
+        {
+          "next": "invalid_menu_principal",
+          "event": "noMatch"
+        },
         {
           "next": "track_mp_vn",
           "event": "match",
-          "conditions": [{ "friendly_name": "VN", "arguments": ["{{widgets.menu_principal.inbound.Body}}"], "type": "equal_to", "value": "1" }]
+          "conditions": [
+            {
+              "friendly_name": "VN",
+              "arguments": [
+                "{{widgets.menu_principal.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "1"
+            }
+          ]
         },
         {
           "next": "track_mp_sav",
           "event": "match",
-          "conditions": [{ "friendly_name": "SAV", "arguments": ["{{widgets.menu_principal.inbound.Body}}"], "type": "equal_to", "value": "2" }]
+          "conditions": [
+            {
+              "friendly_name": "SAV",
+              "arguments": [
+                "{{widgets.menu_principal.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "2"
+            }
+          ]
         },
         {
           "next": "track_mp_reclamation",
           "event": "match",
-          "conditions": [{ "friendly_name": "Réclamation", "arguments": ["{{widgets.menu_principal.inbound.Body}}"], "type": "equal_to", "value": "3" }]
+          "conditions": [
+            {
+              "friendly_name": "Réclamation",
+              "arguments": [
+                "{{widgets.menu_principal.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "3"
+            }
+          ]
         },
         {
           "next": "track_mp_vip",
           "event": "match",
-          "conditions": [{ "friendly_name": "VIP", "arguments": ["{{widgets.menu_principal.inbound.Body}}"], "type": "equal_to", "value": "4" }]
+          "conditions": [
+            {
+              "friendly_name": "VIP",
+              "arguments": [
+                "{{widgets.menu_principal.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "4"
+            }
+          ]
         },
         {
           "next": "track_mp_agent",
           "event": "match",
-          "conditions": [{ "friendly_name": "Agent", "arguments": ["{{widgets.menu_principal.inbound.Body}}"], "type": "equal_to", "value": "5" }]
+          "conditions": [
+            {
+              "friendly_name": "Agent",
+              "arguments": [
+                "{{widgets.menu_principal.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "5"
+            }
+          ]
         }
       ],
       "properties": {
         "input": "{{widgets.menu_principal.inbound.Body}}",
-        "offset": { "x": 1888, "y": 2263 }
+        "offset": {
+          "x": 1888,
+          "y": 2263
+        }
       }
     },
     {
       "name": "invalid_menu_principal",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_principal", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_principal",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 3373, "y": 2439 },
+        "offset": {
+          "x": 3373,
+          "y": 2439
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -456,12 +739,23 @@
       "name": "menu_vn",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "split_menu_vn", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "split_menu_vn",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 904, "y": 2439 },
+        "offset": {
+          "x": 904,
+          "y": 2439
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -473,47 +767,106 @@
       "name": "split_menu_vn",
       "type": "split-based-on",
       "transitions": [
-        { "next": "invalid_menu_vn", "event": "noMatch" },
+        {
+          "next": "invalid_menu_vn",
+          "event": "noMatch"
+        },
         {
           "next": "track_vn_catalogue",
           "event": "match",
-          "conditions": [{ "friendly_name": "Catalogue", "arguments": ["{{widgets.menu_vn.inbound.Body}}"], "type": "equal_to", "value": "1" }]
+          "conditions": [
+            {
+              "friendly_name": "Catalogue",
+              "arguments": [
+                "{{widgets.menu_vn.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "1"
+            }
+          ]
         },
         {
           "next": "track_vn_essai",
           "event": "match",
-          "conditions": [{ "friendly_name": "Essai", "arguments": ["{{widgets.menu_vn.inbound.Body}}"], "type": "equal_to", "value": "2" }]
+          "conditions": [
+            {
+              "friendly_name": "Essai",
+              "arguments": [
+                "{{widgets.menu_vn.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "2"
+            }
+          ]
         },
         {
           "next": "track_vn_conseiller",
           "event": "match",
-          "conditions": [{ "friendly_name": "Conseiller", "arguments": ["{{widgets.menu_vn.inbound.Body}}"], "type": "equal_to", "value": "3" }]
+          "conditions": [
+            {
+              "friendly_name": "Conseiller",
+              "arguments": [
+                "{{widgets.menu_vn.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "3"
+            }
+          ]
         },
         {
           "next": "track_vn_garantie",
           "event": "match",
-          "conditions": [{ "friendly_name": "Garantie", "arguments": ["{{widgets.menu_vn.inbound.Body}}"], "type": "equal_to", "value": "4" }]
+          "conditions": [
+            {
+              "friendly_name": "Garantie",
+              "arguments": [
+                "{{widgets.menu_vn.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "4"
+            }
+          ]
         },
         {
           "next": "menu_principal",
           "event": "match",
-          "conditions": [{ "friendly_name": "Retour", "arguments": ["{{widgets.menu_vn.inbound.Body}}"], "type": "equal_to", "value": "5" }]
+          "conditions": [
+            {
+              "friendly_name": "Retour",
+              "arguments": [
+                "{{widgets.menu_vn.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "5"
+            }
+          ]
         }
       ],
       "properties": {
         "input": "{{widgets.menu_vn.inbound.Body}}",
-        "offset": { "x": 1951, "y": 2616 }
+        "offset": {
+          "x": 1951,
+          "y": 2616
+        }
       }
     },
     {
       "name": "invalid_menu_vn",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_vn", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_vn",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 1110, "y": 2792 },
+        "offset": {
+          "x": 1110,
+          "y": 2792
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -525,11 +878,19 @@
       "name": "send_catalogue",
       "type": "send-message",
       "transitions": [
-        { "next": "Copy_of_delay_after_catalogue", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "Copy_of_delay_after_catalogue",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 1522, "y": 2968 },
+        "offset": {
+          "x": 1522,
+          "y": 2968
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -542,13 +903,22 @@
       "name": "Copy_of_delay_after_catalogue",
       "type": "run-function",
       "transitions": [
-        { "next": "delay_after_catalogue", "event": "success" },
-        { "next": "delay_after_catalogue", "event": "fail" }
+        {
+          "next": "delay_after_catalogue",
+          "event": "success"
+        },
+        {
+          "next": "delay_after_catalogue",
+          "event": "fail"
+        }
       ],
       "properties": {
         "service_sid": "ZSb7de9fd35671e380ad53677e2cf57770",
         "environment_sid": "ZEc4ec4248edabbbb0cddf19a5c41ef926",
-        "offset": { "x": 1468, "y": 3144 },
+        "offset": {
+          "x": 1468,
+          "y": 3144
+        },
         "function_sid": "ZHe612874f4ed88f0f570e65c3a78d3411",
         "url": "https://merco-9614.twil.io/add_delay"
       }
@@ -557,13 +927,22 @@
       "name": "delay_after_catalogue",
       "type": "run-function",
       "transitions": [
-        { "next": "menu_fin_vn", "event": "success" },
-        { "next": "menu_fin_vn", "event": "fail" }
+        {
+          "next": "menu_fin_vn",
+          "event": "success"
+        },
+        {
+          "next": "menu_fin_vn",
+          "event": "fail"
+        }
       ],
       "properties": {
         "service_sid": "ZSb7de9fd35671e380ad53677e2cf57770",
         "environment_sid": "ZEc4ec4248edabbbb0cddf19a5c41ef926",
-        "offset": { "x": 1468, "y": 3320 },
+        "offset": {
+          "x": 1468,
+          "y": 3320
+        },
         "function_sid": "ZHe612874f4ed88f0f570e65c3a78d3411",
         "url": "https://merco-9614.twil.io/add_delay"
       }
@@ -572,11 +951,19 @@
       "name": "send_essai",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_vn", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_vn",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 1914, "y": 2968 },
+        "offset": {
+          "x": 1914,
+          "y": 2968
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -588,12 +975,23 @@
       "name": "ask_contact_info",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "http_to_commercial", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "http_to_commercial",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 2317, "y": 2792 },
+        "offset": {
+          "x": 2317,
+          "y": 2792
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -605,20 +1003,44 @@
       "name": "http_to_commercial",
       "type": "make-http-request",
       "transitions": [
-        { "next": "send_confirmation_conseiller", "event": "success" },
-        { "next": "send_confirmation_conseiller", "event": "failed" }
+        {
+          "next": "send_confirmation_conseiller",
+          "event": "success"
+        },
+        {
+          "next": "send_confirmation_conseiller",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 2683, "y": 2968 },
+        "offset": {
+          "x": 2683,
+          "y": 2968
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.message.From}}", "key": "From" },
-          { "value": "{{widgets.ask_contact_info.inbound.Body}}", "key": "Body" },
-          { "value": "{{trigger.message.ProfileName}}", "key": "ProfileName" },
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "contact_commercial", "key": "reason" }
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "{{widgets.ask_contact_info.inbound.Body}}",
+            "key": "Body"
+          },
+          {
+            "value": "{{trigger.message.ProfileName}}",
+            "key": "ProfileName"
+          },
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "contact_commercial",
+            "key": "reason"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/api/webhooks/twilio/handoff"
       }
@@ -627,11 +1049,19 @@
       "name": "send_confirmation_conseiller",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_vn", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_vn",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 2220, "y": 3144 },
+        "offset": {
+          "x": 2220,
+          "y": 3144
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -643,11 +1073,19 @@
       "name": "send_garantie",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_vn", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_vn",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 2611, "y": 2968 },
+        "offset": {
+          "x": 2611,
+          "y": 2968
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -659,12 +1097,23 @@
       "name": "menu_fin_vn",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "split_fin_vn", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "split_fin_vn",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 1866, "y": 3496 },
+        "offset": {
+          "x": 1866,
+          "y": 3496
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -676,37 +1125,78 @@
       "name": "split_fin_vn",
       "type": "split-based-on",
       "transitions": [
-        { "next": "invalid_fin_vn", "event": "noMatch" },
+        {
+          "next": "invalid_fin_vn",
+          "event": "noMatch"
+        },
         {
           "next": "menu_vn",
           "event": "match",
-          "conditions": [{ "friendly_name": "Retour VN", "arguments": ["{{widgets.menu_fin_vn.inbound.Body}}"], "type": "equal_to", "value": "1" }]
+          "conditions": [
+            {
+              "friendly_name": "Retour VN",
+              "arguments": [
+                "{{widgets.menu_fin_vn.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "1"
+            }
+          ]
         },
         {
           "next": "menu_principal",
           "event": "match",
-          "conditions": [{ "friendly_name": "Menu Principal", "arguments": ["{{widgets.menu_fin_vn.inbound.Body}}"], "type": "equal_to", "value": "2" }]
+          "conditions": [
+            {
+              "friendly_name": "Menu Principal",
+              "arguments": [
+                "{{widgets.menu_fin_vn.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "2"
+            }
+          ]
         },
         {
           "next": "send_goodbye",
           "event": "match",
-          "conditions": [{ "friendly_name": "Quitter", "arguments": ["{{widgets.menu_fin_vn.inbound.Body}}"], "type": "equal_to", "value": "3" }]
+          "conditions": [
+            {
+              "friendly_name": "Quitter",
+              "arguments": [
+                "{{widgets.menu_fin_vn.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "3"
+            }
+          ]
         }
       ],
       "properties": {
         "input": "{{widgets.menu_fin_vn.inbound.Body}}",
-        "offset": { "x": 2689, "y": 3672 }
+        "offset": {
+          "x": 2689,
+          "y": 3672
+        }
       }
     },
     {
       "name": "invalid_fin_vn",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_vn", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_vn",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 2042, "y": 3848 },
+        "offset": {
+          "x": 2042,
+          "y": 3848
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -718,12 +1208,23 @@
       "name": "menu_sav",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "split_menu_sav", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "split_menu_sav",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 1805, "y": 2439 },
+        "offset": {
+          "x": 1805,
+          "y": 2439
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -735,47 +1236,106 @@
       "name": "split_menu_sav",
       "type": "split-based-on",
       "transitions": [
-        { "next": "invalid_menu_sav", "event": "noMatch" },
+        {
+          "next": "invalid_menu_sav",
+          "event": "noMatch"
+        },
         {
           "next": "track_sav_entretien",
           "event": "match",
-          "conditions": [{ "friendly_name": "Entretien", "arguments": ["{{widgets.menu_sav.inbound.Body}}"], "type": "equal_to", "value": "1" }]
+          "conditions": [
+            {
+              "friendly_name": "Entretien",
+              "arguments": [
+                "{{widgets.menu_sav.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "1"
+            }
+          ]
         },
         {
           "next": "track_sav_reparation",
           "event": "match",
-          "conditions": [{ "friendly_name": "Réparation", "arguments": ["{{widgets.menu_sav.inbound.Body}}"], "type": "equal_to", "value": "2" }]
+          "conditions": [
+            {
+              "friendly_name": "Réparation",
+              "arguments": [
+                "{{widgets.menu_sav.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "2"
+            }
+          ]
         },
         {
           "next": "track_sav_pieces",
           "event": "match",
-          "conditions": [{ "friendly_name": "Pièces", "arguments": ["{{widgets.menu_sav.inbound.Body}}"], "type": "equal_to", "value": "3" }]
+          "conditions": [
+            {
+              "friendly_name": "Pièces",
+              "arguments": [
+                "{{widgets.menu_sav.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "3"
+            }
+          ]
         },
         {
           "next": "track_sav_agent",
           "event": "match",
-          "conditions": [{ "friendly_name": "Agent SAV", "arguments": ["{{widgets.menu_sav.inbound.Body}}"], "type": "equal_to", "value": "4" }]
+          "conditions": [
+            {
+              "friendly_name": "Agent SAV",
+              "arguments": [
+                "{{widgets.menu_sav.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "4"
+            }
+          ]
         },
         {
           "next": "menu_principal",
           "event": "match",
-          "conditions": [{ "friendly_name": "Retour", "arguments": ["{{widgets.menu_sav.inbound.Body}}"], "type": "equal_to", "value": "5" }]
+          "conditions": [
+            {
+              "friendly_name": "Retour",
+              "arguments": [
+                "{{widgets.menu_sav.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "5"
+            }
+          ]
         }
       ],
       "properties": {
         "input": "{{widgets.menu_sav.inbound.Body}}",
-        "offset": { "x": 4606, "y": 2616 }
+        "offset": {
+          "x": 4606,
+          "y": 2616
+        }
       }
     },
     {
       "name": "invalid_menu_sav",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_sav", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_sav",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 2766, "y": 2792 },
+        "offset": {
+          "x": 2766,
+          "y": 2792
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -787,11 +1347,19 @@
       "name": "send_entretien",
       "type": "send-message",
       "transitions": [
-        { "next": "Copy_2_of_Copy_2_of_delay_after_catalogue", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "Copy_2_of_Copy_2_of_delay_after_catalogue",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 3813, "y": 2968 },
+        "offset": {
+          "x": 3813,
+          "y": 2968
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -804,13 +1372,22 @@
       "name": "Copy_2_of_Copy_2_of_delay_after_catalogue",
       "type": "run-function",
       "transitions": [
-        { "next": "Copy_of_Copy_2_of_Copy_2_of_delay_after_catalogue", "event": "success" },
-        { "next": "Copy_of_Copy_2_of_Copy_2_of_delay_after_catalogue", "event": "fail" }
+        {
+          "next": "Copy_of_Copy_2_of_Copy_2_of_delay_after_catalogue",
+          "event": "success"
+        },
+        {
+          "next": "Copy_of_Copy_2_of_Copy_2_of_delay_after_catalogue",
+          "event": "fail"
+        }
       ],
       "properties": {
         "service_sid": "ZSb7de9fd35671e380ad53677e2cf57770",
         "environment_sid": "ZEc4ec4248edabbbb0cddf19a5c41ef926",
-        "offset": { "x": 3757, "y": 3144 },
+        "offset": {
+          "x": 3757,
+          "y": 3144
+        },
         "function_sid": "ZHe612874f4ed88f0f570e65c3a78d3411",
         "url": "https://merco-9614.twil.io/add_delay"
       }
@@ -819,13 +1396,22 @@
       "name": "Copy_of_Copy_2_of_Copy_2_of_delay_after_catalogue",
       "type": "run-function",
       "transitions": [
-        { "next": "menu_fin_sav", "event": "success" },
-        { "next": "menu_fin_sav", "event": "fail" }
+        {
+          "next": "menu_fin_sav",
+          "event": "success"
+        },
+        {
+          "next": "menu_fin_sav",
+          "event": "fail"
+        }
       ],
       "properties": {
         "service_sid": "ZSb7de9fd35671e380ad53677e2cf57770",
         "environment_sid": "ZEc4ec4248edabbbb0cddf19a5c41ef926",
-        "offset": { "x": 3757, "y": 3320 },
+        "offset": {
+          "x": 3757,
+          "y": 3320
+        },
         "function_sid": "ZHe612874f4ed88f0f570e65c3a78d3411",
         "url": "https://merco-9614.twil.io/add_delay"
       }
@@ -834,12 +1420,23 @@
       "name": "ask_reparation_info",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "http_to_reparation", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "http_to_reparation",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 4444, "y": 2792 },
+        "offset": {
+          "x": 4444,
+          "y": 2792
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -851,20 +1448,44 @@
       "name": "http_to_reparation",
       "type": "make-http-request",
       "transitions": [
-        { "next": "send_confirmation_reparation", "event": "success" },
-        { "next": "send_confirmation_reparation", "event": "failed" }
+        {
+          "next": "send_confirmation_reparation",
+          "event": "success"
+        },
+        {
+          "next": "send_confirmation_reparation",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 4523, "y": 2968 },
+        "offset": {
+          "x": 4523,
+          "y": 2968
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.message.From}}", "key": "From" },
-          { "value": "{{widgets.ask_reparation_info.inbound.Body}}", "key": "Body" },
-          { "value": "{{trigger.message.ProfileName}}", "key": "ProfileName" },
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "reparation_sav", "key": "reason" }
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "{{widgets.ask_reparation_info.inbound.Body}}",
+            "key": "Body"
+          },
+          {
+            "value": "{{trigger.message.ProfileName}}",
+            "key": "ProfileName"
+          },
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "reparation_sav",
+            "key": "reason"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/api/webhooks/twilio/handoff"
       }
@@ -873,11 +1494,19 @@
       "name": "send_confirmation_reparation",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_sav", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_sav",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 4276, "y": 3144 },
+        "offset": {
+          "x": 4276,
+          "y": 3144
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -889,11 +1518,19 @@
       "name": "send_pieces",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_sav", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_sav",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 4820, "y": 2968 },
+        "offset": {
+          "x": 4820,
+          "y": 2968
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -905,20 +1542,44 @@
       "name": "send_confirmation_agent_sav",
       "type": "make-http-request",
       "transitions": [
-        { "next": "send_message_agent_sav", "event": "success" },
-        { "next": "send_message_agent_sav", "event": "failed" }
+        {
+          "next": "send_message_agent_sav",
+          "event": "success"
+        },
+        {
+          "next": "send_message_agent_sav",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 6277, "y": 2792 },
+        "offset": {
+          "x": 6277,
+          "y": 2792
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.message.From}}", "key": "From" },
-          { "value": "Demande agent SAV", "key": "Body" },
-          { "value": "{{trigger.message.ProfileName}}", "key": "ProfileName" },
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "agent_sav", "key": "reason" }
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "Demande agent SAV",
+            "key": "Body"
+          },
+          {
+            "value": "{{trigger.message.ProfileName}}",
+            "key": "ProfileName"
+          },
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "agent_sav",
+            "key": "reason"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/api/webhooks/twilio/handoff"
       }
@@ -927,11 +1588,19 @@
       "name": "send_message_agent_sav",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_sav", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_sav",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 6277, "y": 2968 },
+        "offset": {
+          "x": 6277,
+          "y": 2968
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -943,12 +1612,23 @@
       "name": "menu_fin_sav",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "split_fin_sav", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "split_fin_sav",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 4987, "y": 3496 },
+        "offset": {
+          "x": 4987,
+          "y": 3496
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -960,37 +1640,78 @@
       "name": "split_fin_sav",
       "type": "split-based-on",
       "transitions": [
-        { "next": "invalid_fin_sav", "event": "noMatch" },
+        {
+          "next": "invalid_fin_sav",
+          "event": "noMatch"
+        },
         {
           "next": "menu_sav",
           "event": "match",
-          "conditions": [{ "friendly_name": "Retour SAV", "arguments": ["{{widgets.menu_fin_sav.inbound.Body}}"], "type": "equal_to", "value": "1" }]
+          "conditions": [
+            {
+              "friendly_name": "Retour SAV",
+              "arguments": [
+                "{{widgets.menu_fin_sav.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "1"
+            }
+          ]
         },
         {
           "next": "menu_principal",
           "event": "match",
-          "conditions": [{ "friendly_name": "Menu Principal", "arguments": ["{{widgets.menu_fin_sav.inbound.Body}}"], "type": "equal_to", "value": "2" }]
+          "conditions": [
+            {
+              "friendly_name": "Menu Principal",
+              "arguments": [
+                "{{widgets.menu_fin_sav.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "2"
+            }
+          ]
         },
         {
           "next": "send_goodbye",
           "event": "match",
-          "conditions": [{ "friendly_name": "Quitter", "arguments": ["{{widgets.menu_fin_sav.inbound.Body}}"], "type": "equal_to", "value": "3" }]
+          "conditions": [
+            {
+              "friendly_name": "Quitter",
+              "arguments": [
+                "{{widgets.menu_fin_sav.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "3"
+            }
+          ]
         }
       ],
       "properties": {
         "input": "{{widgets.menu_fin_sav.inbound.Body}}",
-        "offset": { "x": 4995, "y": 3672 }
+        "offset": {
+          "x": 4995,
+          "y": 3672
+        }
       }
     },
     {
       "name": "invalid_fin_sav",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_sav", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_sav",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 4884, "y": 3848 },
+        "offset": {
+          "x": 4884,
+          "y": 3848
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1002,12 +1723,23 @@
       "name": "ask_reclamation",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "http_to_chat_1", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "http_to_chat_1",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 3197, "y": 2439 },
+        "offset": {
+          "x": 3197,
+          "y": 2439
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1019,20 +1751,44 @@
       "name": "http_to_chat_1",
       "type": "make-http-request",
       "transitions": [
-        { "next": "send_confirmation_reclamation", "event": "success" },
-        { "next": "send_confirmation_reclamation", "event": "failed" }
+        {
+          "next": "send_confirmation_reclamation",
+          "event": "success"
+        },
+        {
+          "next": "send_confirmation_reclamation",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 3320, "y": 2616 },
+        "offset": {
+          "x": 3320,
+          "y": 2616
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.message.From}}", "key": "From" },
-          { "value": "{{widgets.ask_reclamation.inbound.Body}}", "key": "Body" },
-          { "value": "{{trigger.message.ProfileName}}", "key": "ProfileName" },
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "reclamation", "key": "reason" }
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "{{widgets.ask_reclamation.inbound.Body}}",
+            "key": "Body"
+          },
+          {
+            "value": "{{trigger.message.ProfileName}}",
+            "key": "ProfileName"
+          },
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "reclamation",
+            "key": "reason"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/api/webhooks/twilio/handoff"
       }
@@ -1041,11 +1797,19 @@
       "name": "send_confirmation_reclamation",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_reclamation", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_reclamation",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 3084, "y": 2792 },
+        "offset": {
+          "x": 3084,
+          "y": 2792
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1057,12 +1821,23 @@
       "name": "menu_fin_reclamation",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "split_fin_reclamation", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "split_fin_reclamation",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 3105, "y": 2968 },
+        "offset": {
+          "x": 3105,
+          "y": 2968
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1074,32 +1849,64 @@
       "name": "split_fin_reclamation",
       "type": "split-based-on",
       "transitions": [
-        { "next": "invalid_fin_reclamation", "event": "noMatch" },
+        {
+          "next": "invalid_fin_reclamation",
+          "event": "noMatch"
+        },
         {
           "next": "menu_principal",
           "event": "match",
-          "conditions": [{ "friendly_name": "Menu Principal", "arguments": ["{{widgets.menu_fin_reclamation.inbound.Body}}"], "type": "equal_to", "value": "1" }]
+          "conditions": [
+            {
+              "friendly_name": "Menu Principal",
+              "arguments": [
+                "{{widgets.menu_fin_reclamation.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "1"
+            }
+          ]
         },
         {
           "next": "send_goodbye",
           "event": "match",
-          "conditions": [{ "friendly_name": "Quitter", "arguments": ["{{widgets.menu_fin_reclamation.inbound.Body}}"], "type": "equal_to", "value": "2" }]
+          "conditions": [
+            {
+              "friendly_name": "Quitter",
+              "arguments": [
+                "{{widgets.menu_fin_reclamation.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "2"
+            }
+          ]
         }
       ],
       "properties": {
         "input": "{{widgets.menu_fin_reclamation.inbound.Body}}",
-        "offset": { "x": 5490, "y": 3144 }
+        "offset": {
+          "x": 5490,
+          "y": 3144
+        }
       }
     },
     {
       "name": "invalid_fin_reclamation",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_reclamation", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_reclamation",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 4133, "y": 3320 },
+        "offset": {
+          "x": 4133,
+          "y": 3320
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1111,12 +1918,23 @@
       "name": "menu_vip",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "split_menu_vip", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "split_menu_vip",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 3561, "y": 2439 },
+        "offset": {
+          "x": 3561,
+          "y": 2439
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1128,37 +1946,78 @@
       "name": "split_menu_vip",
       "type": "split-based-on",
       "transitions": [
-        { "next": "invalid_menu_vip", "event": "noMatch" },
+        {
+          "next": "invalid_menu_vip",
+          "event": "noMatch"
+        },
         {
           "next": "track_vip_fonctionnement",
           "event": "match",
-          "conditions": [{ "friendly_name": "Fonctionnement", "arguments": ["{{widgets.menu_vip.inbound.Body}}"], "type": "equal_to", "value": "1" }]
+          "conditions": [
+            {
+              "friendly_name": "Fonctionnement",
+              "arguments": [
+                "{{widgets.menu_vip.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "1"
+            }
+          ]
         },
         {
           "next": "track_vip_conseiller",
           "event": "match",
-          "conditions": [{ "friendly_name": "Conseiller VIP", "arguments": ["{{widgets.menu_vip.inbound.Body}}"], "type": "equal_to", "value": "2" }]
+          "conditions": [
+            {
+              "friendly_name": "Conseiller VIP",
+              "arguments": [
+                "{{widgets.menu_vip.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "2"
+            }
+          ]
         },
         {
           "next": "menu_principal",
           "event": "match",
-          "conditions": [{ "friendly_name": "Retour", "arguments": ["{{widgets.menu_vip.inbound.Body}}"], "type": "equal_to", "value": "3" }]
+          "conditions": [
+            {
+              "friendly_name": "Retour",
+              "arguments": [
+                "{{widgets.menu_vip.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "3"
+            }
+          ]
         }
       ],
       "properties": {
         "input": "{{widgets.menu_vip.inbound.Body}}",
-        "offset": { "x": 5669, "y": 2616 }
+        "offset": {
+          "x": 5669,
+          "y": 2616
+        }
       }
     },
     {
       "name": "invalid_menu_vip",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_vip", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_vip",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 4133, "y": 2792 },
+        "offset": {
+          "x": 4133,
+          "y": 2792
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1170,11 +2029,19 @@
       "name": "send_brochure_vip",
       "type": "send-message",
       "transitions": [
-        { "next": "Copy_2_of_delay_after_catalogue", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "Copy_2_of_delay_after_catalogue",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 5375, "y": 2792 },
+        "offset": {
+          "x": 5375,
+          "y": 2792
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1187,13 +2054,22 @@
       "name": "Copy_2_of_delay_after_catalogue",
       "type": "run-function",
       "transitions": [
-        { "next": "Copy_of_Copy_2_of_delay_after_catalogue", "event": "success" },
-        { "next": "Copy_of_Copy_2_of_delay_after_catalogue", "event": "fail" }
+        {
+          "next": "Copy_of_Copy_2_of_delay_after_catalogue",
+          "event": "success"
+        },
+        {
+          "next": "Copy_of_Copy_2_of_delay_after_catalogue",
+          "event": "fail"
+        }
       ],
       "properties": {
         "service_sid": "ZSb7de9fd35671e380ad53677e2cf57770",
         "environment_sid": "ZEc4ec4248edabbbb0cddf19a5c41ef926",
-        "offset": { "x": 5332, "y": 2968 },
+        "offset": {
+          "x": 5332,
+          "y": 2968
+        },
         "function_sid": "ZHe612874f4ed88f0f570e65c3a78d3411",
         "url": "https://merco-9614.twil.io/add_delay"
       }
@@ -1202,13 +2078,22 @@
       "name": "Copy_of_Copy_2_of_delay_after_catalogue",
       "type": "run-function",
       "transitions": [
-        { "next": "menu_fin_vip", "event": "success" },
-        { "next": "menu_fin_vip", "event": "fail" }
+        {
+          "next": "menu_fin_vip",
+          "event": "success"
+        },
+        {
+          "next": "menu_fin_vip",
+          "event": "fail"
+        }
       ],
       "properties": {
         "service_sid": "ZSb7de9fd35671e380ad53677e2cf57770",
         "environment_sid": "ZEc4ec4248edabbbb0cddf19a5c41ef926",
-        "offset": { "x": 5332, "y": 3144 },
+        "offset": {
+          "x": 5332,
+          "y": 3144
+        },
         "function_sid": "ZHe612874f4ed88f0f570e65c3a78d3411",
         "url": "https://merco-9614.twil.io/add_delay"
       }
@@ -1217,11 +2102,19 @@
       "name": "send_confirmation_vip",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_vip", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_vip",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 5933, "y": 2792 },
+        "offset": {
+          "x": 5933,
+          "y": 2792
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1233,12 +2126,23 @@
       "name": "menu_fin_vip",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "split_fin_vip", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "split_fin_vip",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 6074, "y": 3320 },
+        "offset": {
+          "x": 6074,
+          "y": 3320
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1250,37 +2154,78 @@
       "name": "split_fin_vip",
       "type": "split-based-on",
       "transitions": [
-        { "next": "invalid_fin_vip", "event": "noMatch" },
+        {
+          "next": "invalid_fin_vip",
+          "event": "noMatch"
+        },
         {
           "next": "menu_vip",
           "event": "match",
-          "conditions": [{ "friendly_name": "Retour VIP", "arguments": ["{{widgets.menu_fin_vip.inbound.Body}}"], "type": "equal_to", "value": "1" }]
+          "conditions": [
+            {
+              "friendly_name": "Retour VIP",
+              "arguments": [
+                "{{widgets.menu_fin_vip.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "1"
+            }
+          ]
         },
         {
           "next": "menu_principal",
           "event": "match",
-          "conditions": [{ "friendly_name": "Menu Principal", "arguments": ["{{widgets.menu_fin_vip.inbound.Body}}"], "type": "equal_to", "value": "2" }]
+          "conditions": [
+            {
+              "friendly_name": "Menu Principal",
+              "arguments": [
+                "{{widgets.menu_fin_vip.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "2"
+            }
+          ]
         },
         {
           "next": "send_goodbye",
           "event": "match",
-          "conditions": [{ "friendly_name": "Quitter", "arguments": ["{{widgets.menu_fin_vip.inbound.Body}}"], "type": "equal_to", "value": "3" }]
+          "conditions": [
+            {
+              "friendly_name": "Quitter",
+              "arguments": [
+                "{{widgets.menu_fin_vip.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "3"
+            }
+          ]
         }
       ],
       "properties": {
         "input": "{{widgets.menu_fin_vip.inbound.Body}}",
-        "offset": { "x": 5984, "y": 3496 }
+        "offset": {
+          "x": 5984,
+          "y": 3496
+        }
       }
     },
     {
       "name": "invalid_fin_vip",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_vip", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_vip",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 6682, "y": 3672 },
+        "offset": {
+          "x": 6682,
+          "y": 3672
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1292,12 +2237,23 @@
       "name": "ask_agent_reason",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "http_to_agent", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "http_to_agent",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 6863, "y": 2439 },
+        "offset": {
+          "x": 6863,
+          "y": 2439
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1309,20 +2265,44 @@
       "name": "http_to_agent",
       "type": "make-http-request",
       "transitions": [
-        { "next": "send_confirmation_agent", "event": "success" },
-        { "next": "send_confirmation_agent", "event": "failed" }
+        {
+          "next": "send_confirmation_agent",
+          "event": "success"
+        },
+        {
+          "next": "send_confirmation_agent",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 6863, "y": 2616 },
+        "offset": {
+          "x": 6863,
+          "y": 2616
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.message.From}}", "key": "From" },
-          { "value": "{{widgets.ask_agent_reason.inbound.Body}}", "key": "Body" },
-          { "value": "{{trigger.message.ProfileName}}", "key": "ProfileName" },
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "agent_general", "key": "reason" }
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "{{widgets.ask_agent_reason.inbound.Body}}",
+            "key": "Body"
+          },
+          {
+            "value": "{{trigger.message.ProfileName}}",
+            "key": "ProfileName"
+          },
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "agent_general",
+            "key": "reason"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/api/webhooks/twilio/handoff"
       }
@@ -1331,11 +2311,19 @@
       "name": "send_confirmation_agent",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_agent", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_agent",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 6766, "y": 2792 },
+        "offset": {
+          "x": 6766,
+          "y": 2792
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1347,12 +2335,23 @@
       "name": "menu_fin_agent",
       "type": "send-and-wait-for-reply",
       "transitions": [
-        { "next": "split_fin_agent", "event": "incomingMessage" },
-        { "next": "handle_timeout", "event": "timeout" },
-        { "event": "deliveryFailure" }
+        {
+          "next": "split_fin_agent",
+          "event": "incomingMessage"
+        },
+        {
+          "next": "handle_timeout",
+          "event": "timeout"
+        },
+        {
+          "event": "deliveryFailure"
+        }
       ],
       "properties": {
-        "offset": { "x": 6772, "y": 2968 },
+        "offset": {
+          "x": 6772,
+          "y": 2968
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1364,32 +2363,64 @@
       "name": "split_fin_agent",
       "type": "split-based-on",
       "transitions": [
-        { "next": "invalid_fin_agent", "event": "noMatch" },
+        {
+          "next": "invalid_fin_agent",
+          "event": "noMatch"
+        },
         {
           "next": "menu_principal",
           "event": "match",
-          "conditions": [{ "friendly_name": "Menu Principal", "arguments": ["{{widgets.menu_fin_agent.inbound.Body}}"], "type": "equal_to", "value": "1" }]
+          "conditions": [
+            {
+              "friendly_name": "Menu Principal",
+              "arguments": [
+                "{{widgets.menu_fin_agent.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "1"
+            }
+          ]
         },
         {
           "next": "send_goodbye",
           "event": "match",
-          "conditions": [{ "friendly_name": "Quitter", "arguments": ["{{widgets.menu_fin_agent.inbound.Body}}"], "type": "equal_to", "value": "2" }]
+          "conditions": [
+            {
+              "friendly_name": "Quitter",
+              "arguments": [
+                "{{widgets.menu_fin_agent.inbound.Body}}"
+              ],
+              "type": "equal_to",
+              "value": "2"
+            }
+          ]
         }
       ],
       "properties": {
         "input": "{{widgets.menu_fin_agent.inbound.Body}}",
-        "offset": { "x": 7165, "y": 3144 }
+        "offset": {
+          "x": 7165,
+          "y": 3144
+        }
       }
     },
     {
       "name": "invalid_fin_agent",
       "type": "send-message",
       "transitions": [
-        { "next": "menu_fin_agent", "event": "sent" },
-        { "event": "failed" }
+        {
+          "next": "menu_fin_agent",
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 7431, "y": 3320 },
+        "offset": {
+          "x": 7431,
+          "y": 3320
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1401,11 +2432,18 @@
       "name": "send_goodbye",
       "type": "send-message",
       "transitions": [
-        { "event": "sent" },
-        { "event": "failed" }
+        {
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 5783, "y": 3848 },
+        "offset": {
+          "x": 5783,
+          "y": 3848
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
@@ -1417,36 +2455,67 @@
       "name": "handle_timeout",
       "type": "send-message",
       "transitions": [
-        { "event": "sent" },
-        { "event": "failed" }
+        {
+          "event": "sent"
+        },
+        {
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 4159, "y": 3672 },
+        "offset": {
+          "x": 4159,
+          "y": 3672
+        },
         "service": "{{trigger.message.InstanceSid}}",
         "channel": "{{trigger.message.ChannelSid}}",
         "from": "{{flow.channel.address}}",
         "to": "{{contact.channel.address}}",
         "body": "Votre session a expiré pour cause d'inactivité.\nN'hésitez pas à nous recontacter.\n\n📞 07 01 52 52 52"
       }
-    }
-    ,
+    },
     {
       "name": "track_mp_vn",
       "type": "make-http-request",
       "transitions": [
-        { "next": "menu_vn", "event": "success" },
-        { "next": "menu_vn", "event": "failed" }
+        {
+          "next": "menu_vn",
+          "event": "success"
+        },
+        {
+          "next": "menu_vn",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 1888, "y": 2440 },
+        "offset": {
+          "x": 1888,
+          "y": 2440
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_principal", "key": "menu_name" },
-          { "value": "{{widgets.menu_principal.inbound.Body}}", "key": "user_input" },
-          { "value": "Véhicules neufs", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_principal",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_principal.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Véhicules neufs",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1455,19 +2524,44 @@
       "name": "track_mp_sav",
       "type": "make-http-request",
       "transitions": [
-        { "next": "menu_sav", "event": "success" },
-        { "next": "menu_sav", "event": "failed" }
+        {
+          "next": "menu_sav",
+          "event": "success"
+        },
+        {
+          "next": "menu_sav",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 2188, "y": 2440 },
+        "offset": {
+          "x": 2188,
+          "y": 2440
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_principal", "key": "menu_name" },
-          { "value": "{{widgets.menu_principal.inbound.Body}}", "key": "user_input" },
-          { "value": "Service après-vente", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_principal",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_principal.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Service après-vente",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1476,19 +2570,44 @@
       "name": "track_mp_reclamation",
       "type": "make-http-request",
       "transitions": [
-        { "next": "ask_reclamation", "event": "success" },
-        { "next": "ask_reclamation", "event": "failed" }
+        {
+          "next": "ask_reclamation",
+          "event": "success"
+        },
+        {
+          "next": "ask_reclamation",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 2488, "y": 2440 },
+        "offset": {
+          "x": 2488,
+          "y": 2440
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_principal", "key": "menu_name" },
-          { "value": "{{widgets.menu_principal.inbound.Body}}", "key": "user_input" },
-          { "value": "Réclamations", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_principal",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_principal.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Réclamations",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1497,19 +2616,44 @@
       "name": "track_mp_vip",
       "type": "make-http-request",
       "transitions": [
-        { "next": "menu_vip", "event": "success" },
-        { "next": "menu_vip", "event": "failed" }
+        {
+          "next": "menu_vip",
+          "event": "success"
+        },
+        {
+          "next": "menu_vip",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 2788, "y": 2440 },
+        "offset": {
+          "x": 2788,
+          "y": 2440
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_principal", "key": "menu_name" },
-          { "value": "{{widgets.menu_principal.inbound.Body}}", "key": "user_input" },
-          { "value": "Club VIP Mercedes-Benz", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_principal",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_principal.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Club VIP Mercedes-Benz",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1518,19 +2662,44 @@
       "name": "track_mp_agent",
       "type": "make-http-request",
       "transitions": [
-        { "next": "ask_agent_reason", "event": "success" },
-        { "next": "ask_agent_reason", "event": "failed" }
+        {
+          "next": "ask_agent_reason",
+          "event": "success"
+        },
+        {
+          "next": "ask_agent_reason",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 3088, "y": 2440 },
+        "offset": {
+          "x": 3088,
+          "y": 2440
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_principal", "key": "menu_name" },
-          { "value": "{{widgets.menu_principal.inbound.Body}}", "key": "user_input" },
-          { "value": "Parler à un agent", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_principal",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_principal.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Parler à un agent",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1539,19 +2708,44 @@
       "name": "track_vn_catalogue",
       "type": "make-http-request",
       "transitions": [
-        { "next": "send_catalogue", "event": "success" },
-        { "next": "send_catalogue", "event": "failed" }
+        {
+          "next": "send_catalogue",
+          "event": "success"
+        },
+        {
+          "next": "send_catalogue",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 1522, "y": 2800 },
+        "offset": {
+          "x": 1522,
+          "y": 2800
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_vn", "key": "menu_name" },
-          { "value": "{{widgets.menu_vn.inbound.Body}}", "key": "user_input" },
-          { "value": "Notre catalogue", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_vn",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_vn.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Notre catalogue",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1560,19 +2754,44 @@
       "name": "track_vn_essai",
       "type": "make-http-request",
       "transitions": [
-        { "next": "send_essai", "event": "success" },
-        { "next": "send_essai", "event": "failed" }
+        {
+          "next": "send_essai",
+          "event": "success"
+        },
+        {
+          "next": "send_essai",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 1822, "y": 2800 },
+        "offset": {
+          "x": 1822,
+          "y": 2800
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_vn", "key": "menu_name" },
-          { "value": "{{widgets.menu_vn.inbound.Body}}", "key": "user_input" },
-          { "value": "Essai de conduite", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_vn",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_vn.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Essai de conduite",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1581,19 +2800,44 @@
       "name": "track_vn_conseiller",
       "type": "make-http-request",
       "transitions": [
-        { "next": "ask_contact_info", "event": "success" },
-        { "next": "ask_contact_info", "event": "failed" }
+        {
+          "next": "ask_contact_info",
+          "event": "success"
+        },
+        {
+          "next": "ask_contact_info",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 2122, "y": 2800 },
+        "offset": {
+          "x": 2122,
+          "y": 2800
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_vn", "key": "menu_name" },
-          { "value": "{{widgets.menu_vn.inbound.Body}}", "key": "user_input" },
-          { "value": "Être contacté par un conseiller", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_vn",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_vn.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Être contacté par un conseiller",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1602,19 +2846,44 @@
       "name": "track_vn_garantie",
       "type": "make-http-request",
       "transitions": [
-        { "next": "send_garantie", "event": "success" },
-        { "next": "send_garantie", "event": "failed" }
+        {
+          "next": "send_garantie",
+          "event": "success"
+        },
+        {
+          "next": "send_garantie",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 2422, "y": 2800 },
+        "offset": {
+          "x": 2422,
+          "y": 2800
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_vn", "key": "menu_name" },
-          { "value": "{{widgets.menu_vn.inbound.Body}}", "key": "user_input" },
-          { "value": "Garantie constructeur", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_vn",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_vn.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Garantie constructeur",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1623,19 +2892,44 @@
       "name": "track_sav_entretien",
       "type": "make-http-request",
       "transitions": [
-        { "next": "send_entretien", "event": "success" },
-        { "next": "send_entretien", "event": "failed" }
+        {
+          "next": "send_entretien",
+          "event": "success"
+        },
+        {
+          "next": "send_entretien",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 3813, "y": 2800 },
+        "offset": {
+          "x": 3813,
+          "y": 2800
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_sav", "key": "menu_name" },
-          { "value": "{{widgets.menu_sav.inbound.Body}}", "key": "user_input" },
-          { "value": "Entretien & maintenance", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_sav",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_sav.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Entretien & maintenance",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1644,19 +2938,44 @@
       "name": "track_sav_reparation",
       "type": "make-http-request",
       "transitions": [
-        { "next": "ask_reparation_info", "event": "success" },
-        { "next": "ask_reparation_info", "event": "failed" }
+        {
+          "next": "ask_reparation_info",
+          "event": "success"
+        },
+        {
+          "next": "ask_reparation_info",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 4113, "y": 2800 },
+        "offset": {
+          "x": 4113,
+          "y": 2800
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_sav", "key": "menu_name" },
-          { "value": "{{widgets.menu_sav.inbound.Body}}", "key": "user_input" },
-          { "value": "Réparation", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_sav",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_sav.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Réparation",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1665,19 +2984,44 @@
       "name": "track_sav_pieces",
       "type": "make-http-request",
       "transitions": [
-        { "next": "send_pieces", "event": "success" },
-        { "next": "send_pieces", "event": "failed" }
+        {
+          "next": "send_pieces",
+          "event": "success"
+        },
+        {
+          "next": "send_pieces",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 4413, "y": 2800 },
+        "offset": {
+          "x": 4413,
+          "y": 2800
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_sav", "key": "menu_name" },
-          { "value": "{{widgets.menu_sav.inbound.Body}}", "key": "user_input" },
-          { "value": "Pièces d'origine", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_sav",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_sav.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Pièces d'origine",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1686,19 +3030,44 @@
       "name": "track_sav_agent",
       "type": "make-http-request",
       "transitions": [
-        { "next": "send_confirmation_agent_sav", "event": "success" },
-        { "next": "send_confirmation_agent_sav", "event": "failed" }
+        {
+          "next": "send_confirmation_agent_sav",
+          "event": "success"
+        },
+        {
+          "next": "send_confirmation_agent_sav",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 4713, "y": 2800 },
+        "offset": {
+          "x": 4713,
+          "y": 2800
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_sav", "key": "menu_name" },
-          { "value": "{{widgets.menu_sav.inbound.Body}}", "key": "user_input" },
-          { "value": "Parler à un agent SAV", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_sav",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_sav.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Parler à un agent SAV",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1707,19 +3076,44 @@
       "name": "track_vip_fonctionnement",
       "type": "make-http-request",
       "transitions": [
-        { "next": "send_brochure_vip", "event": "success" },
-        { "next": "send_brochure_vip", "event": "failed" }
+        {
+          "next": "send_brochure_vip",
+          "event": "success"
+        },
+        {
+          "next": "send_brochure_vip",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 5375, "y": 2800 },
+        "offset": {
+          "x": 5375,
+          "y": 2800
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_vip", "key": "menu_name" },
-          { "value": "{{widgets.menu_vip.inbound.Body}}", "key": "user_input" },
-          { "value": "Fonctionnement du programme VIP", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_vip",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_vip.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Fonctionnement du programme VIP",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
@@ -1728,19 +3122,44 @@
       "name": "track_vip_conseiller",
       "type": "make-http-request",
       "transitions": [
-        { "next": "send_confirmation_vip", "event": "success" },
-        { "next": "send_confirmation_vip", "event": "failed" }
+        {
+          "next": "send_confirmation_vip",
+          "event": "success"
+        },
+        {
+          "next": "send_confirmation_vip",
+          "event": "failed"
+        }
       ],
       "properties": {
-        "offset": { "x": 5675, "y": 2800 },
+        "offset": {
+          "x": 5675,
+          "y": 2800
+        },
         "method": "POST",
         "content_type": "application/json",
         "add_twilio_auth": false,
         "parameters": [
-          { "value": "{{trigger.params.conversation_id}}", "key": "conversation_id" },
-          { "value": "menu_vip", "key": "menu_name" },
-          { "value": "{{widgets.menu_vip.inbound.Body}}", "key": "user_input" },
-          { "value": "Demander un conseiller VIP", "key": "choice_label" }
+          {
+            "value": "{{trigger.params.conversation_id}}",
+            "key": "conversation_id"
+          },
+          {
+            "value": "{{trigger.message.From}}",
+            "key": "From"
+          },
+          {
+            "value": "menu_vip",
+            "key": "menu_name"
+          },
+          {
+            "value": "{{widgets.menu_vip.inbound.Body}}",
+            "key": "user_input"
+          },
+          {
+            "value": "Demander un conseiller VIP",
+            "key": "choice_label"
+          }
         ],
         "url": "https://mbbot-dashboard.ywcdigital.com/bot-tracking/twilio/menu-choice"
       }
