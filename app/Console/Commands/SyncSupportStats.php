@@ -144,18 +144,20 @@ class SyncSupportStats extends Command
 
     /**
      * Construit des stats agents en paginant les conversations ouvertes et résolues.
+     * Filtré sur l'inbox WhatsApp configurée (CHATWOOT_WHATSAPP_INBOX_ID).
      * Retourne un tableau indexé par agent_id.
      */
     private function buildAgentStatsFromConversations(): array
     {
         $agentCounts = []; // [agent_id => ['name'=>, 'email'=>, 'open'=>, 'resolved'=>]]
+        $inboxId     = (int) config('chatwoot.whatsapp_inbox_id') ?: null;
 
         // Conversations ouvertes (max 5 pages = 500 conversations)
         foreach (['open', 'resolved'] as $status) {
             $maxPages = $status === 'open' ? 5 : 5;
             for ($page = 1; $page <= $maxPages; $page++) {
                 try {
-                    $response = $this->client->listConversations($status, 'all', $page);
+                    $response = $this->client->listConversations($status, 'all', $page, $inboxId);
                     $convs    = $response['data']['payload'] ?? [];
 
                     if (empty($convs)) break;
