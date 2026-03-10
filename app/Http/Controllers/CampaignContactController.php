@@ -180,8 +180,9 @@ class CampaignContactController extends Controller
 
         try {
             while ($page <= $maxPages) {
-                // listContacts envoie déjà inbox_id au niveau API — pas besoin de double filtre
-                $data     = $this->chatwoot->listContacts($page, '-last_activity_at', false);
+                // include_contact_inboxes=true pour pouvoir filtrer côté PHP
+                // (Chatwoot ignore le paramètre inbox_id sur l'endpoint /contacts)
+                $data     = $this->chatwoot->listContacts($page, '-last_activity_at', true);
                 $contacts = $data['payload'] ?? [];
 
                 if (empty($contacts)) {
@@ -189,6 +190,16 @@ class CampaignContactController extends Controller
                 }
 
                 foreach ($contacts as $cwContact) {
+                    // Filtrer : ne garder que les contacts présents dans l'inbox configurée
+                    $contactInboxes = $cwContact['contact_inboxes'] ?? [];
+                    $inInbox = collect($contactInboxes)->contains(
+                        fn($ci) => (int) ($ci['inbox']['id'] ?? $ci['inbox_id'] ?? 0) === $inboxId
+                    );
+                    if (!$inInbox) {
+                        $skipped++;
+                        continue;
+                    }
+
                     $phone = $cwContact['phone_number'] ?? null;
                     $name  = $cwContact['name'] ?? 'Contact';
 
